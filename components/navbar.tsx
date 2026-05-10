@@ -1,7 +1,10 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Link from "next/link"
+import { createClient } from "@/lib/supabase"
+import { useRouter } from "next/navigation"
+import { User } from "lucide-react"
 
 type NavbarProps = {
   variant?: "transparent" | "solid"
@@ -11,6 +14,29 @@ type NavbarProps = {
 
 export function Navbar({ variant = "solid", onStartClick, onLoginClick }: NavbarProps) {
   const [menuOpen, setMenuOpen] = useState(false)
+  const [user, setUser] = useState<any>(null)
+  const supabase = createClient()
+  const router = useRouter()
+
+  useEffect(() => {
+    const getUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser()
+      setUser(user)
+    }
+    getUser()
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null)
+    })
+
+    return () => subscription.unsubscribe()
+  }, [])
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut()
+    router.refresh()
+    router.push("/")
+  }
 
   return (
     <header
@@ -53,12 +79,35 @@ export function Navbar({ variant = "solid", onStartClick, onLoginClick }: Navbar
 
         {/* CTA */}
         <div className="hidden md:flex items-center gap-3">
-          <button
-            onClick={onStartClick}
-            className="px-5 py-2.5 rounded-full bg-[var(--teal)] text-[var(--primary-foreground)] text-sm font-medium hover:bg-[var(--teal-dark)] transition-colors cursor-pointer"
-          >
-            Comenzar gratis
-          </button>
+          {user ? (
+            <div className="flex items-center gap-4">
+              <div className="flex items-center gap-2 text-sm font-medium text-[var(--foreground)]">
+                <User className="w-4 h-4 text-[var(--teal)]" />
+                <span>{user.user_metadata?.full_name || user.email}</span>
+              </div>
+              <button
+                onClick={handleLogout}
+                className="px-5 py-2.5 rounded-full border border-[var(--border)] text-[var(--foreground)] text-sm font-medium hover:bg-[var(--beige)] transition-colors cursor-pointer"
+              >
+                Cerrar sesión
+              </button>
+            </div>
+          ) : (
+            <>
+              <Link
+                href="/login"
+                className="px-5 py-2.5 text-[var(--muted-foreground)] hover:text-[var(--foreground)] text-sm font-medium transition-colors"
+              >
+                Iniciar sesión
+              </Link>
+              <Link
+                href="/?screen=preferences"
+                className="px-5 py-2.5 rounded-full bg-[var(--teal)] text-[var(--primary-foreground)] text-sm font-medium hover:bg-[var(--teal-dark)] transition-colors cursor-pointer"
+              >
+                Comenzar gratis
+              </Link>
+            </>
+          )}
         </div>
 
         {/* Mobile menu toggle */}
@@ -89,18 +138,37 @@ export function Navbar({ variant = "solid", onStartClick, onLoginClick }: Navbar
           <Link href="#favoritos" className="text-sm text-[var(--foreground)]" onClick={() => setMenuOpen(false)}>
             Favoritos
           </Link>
-          <button
-            onClick={() => { onLoginClick?.(); setMenuOpen(false) }}
-            className="mt-2 w-full px-5 py-2.5 rounded-full text-[var(--muted-foreground)] text-sm font-medium border border-[var(--border)]"
-          >
-            Iniciar sesión
-          </button>
-          <button
-            onClick={() => { onStartClick?.(); setMenuOpen(false) }}
-            className="w-full px-5 py-2.5 rounded-full bg-[var(--teal)] text-[var(--primary-foreground)] text-sm font-medium"
-          >
-            Comenzar gratis
-          </button>
+          {user ? (
+            <>
+              <div className="flex items-center gap-2 px-2 py-2 text-sm font-medium text-[var(--foreground)] border-b border-[var(--border)] mb-2">
+                <User className="w-4 h-4 text-[var(--teal)]" />
+                <span>{user.user_metadata?.full_name || user.email}</span>
+              </div>
+              <button
+                onClick={() => { handleLogout(); setMenuOpen(false) }}
+                className="w-full px-5 py-2.5 rounded-full text-left text-[var(--muted-foreground)] text-sm font-medium hover:bg-[var(--beige)] transition-colors"
+              >
+                Cerrar sesión
+              </button>
+            </>
+          ) : (
+            <>
+              <Link 
+                href="/login" 
+                className="mt-2 w-full px-5 py-2.5 rounded-full text-[var(--muted-foreground)] text-sm font-medium border border-[var(--border)] text-center" 
+                onClick={() => setMenuOpen(false)}
+              >
+                Iniciar sesión
+              </Link>
+              <Link
+                href="/?screen=preferences"
+                className="w-full px-5 py-2.5 rounded-full bg-[var(--teal)] text-[var(--primary-foreground)] text-sm font-medium text-center"
+                onClick={() => setMenuOpen(false)}
+              >
+                Comenzar gratis
+              </Link>
+            </>
+          )}
         </div>
       )}
     </header>

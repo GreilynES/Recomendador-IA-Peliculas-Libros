@@ -2,6 +2,8 @@
 
 import { useState } from "react"
 import { cn } from "@/lib/utils"
+import Link from "next/link"
+import { Info } from "lucide-react"
 
 export type Preferences = {
   genres: string[]
@@ -15,6 +17,7 @@ export type Preferences = {
 type PreferencesFormProps = {
   onSubmit: (prefs: Preferences) => void
   onBack: () => void
+  isLoggedIn: boolean
 }
 
 const GENRES = [
@@ -26,7 +29,7 @@ const STORY_TYPES = ["Épico", "Íntimo", "Rápido y tenso", "Reflexivo", "Oscur
 
 const MOODS = ["Quiero reír", "Quiero llorar", "Quiero pensar", "Quiero escapar", "Quiero inspirarme", "Quiero emoción"]
 
-export function PreferencesForm({ onSubmit, onBack }: PreferencesFormProps) {
+export function PreferencesForm({ onSubmit, onBack, isLoggedIn }: PreferencesFormProps) {
   const [prefs, setPrefs] = useState<Preferences>({
     genres: [],
     movieActors: "",
@@ -80,6 +83,36 @@ export function PreferencesForm({ onSubmit, onBack }: PreferencesFormProps) {
           <p className="mt-3 text-[var(--muted-foreground)] leading-relaxed max-w-xl">
             Mientras más nos cuentes, más precisas serán tus recomendaciones.
           </p>
+
+          {!isLoggedIn && (
+            <div className="mt-8 p-4 bg-[var(--teal)]/5 border border-[var(--teal)]/20 rounded-2xl flex items-center gap-4 animate-in fade-in slide-in-from-top-4 duration-700">
+              <div className="w-10 h-10 rounded-full bg-[var(--teal)]/10 flex items-center justify-center flex-shrink-0">
+                <Info className="w-5 h-5 text-[var(--teal)]" />
+              </div>
+              <div className="flex-1">
+                <p className="text-sm text-[var(--foreground)] font-medium">
+                  ¿Quieres guardar tus recomendaciones?
+                </p>
+                <p className="text-xs text-[var(--muted-foreground)] mt-0.5">
+                  Registrate o inicia sesión para tener un historial personalizado de tus preferencias.
+                </p>
+              </div>
+              <div className="flex gap-2">
+                <Link 
+                  href="/login" 
+                  className="px-4 py-2 text-xs font-bold text-[var(--teal)] hover:bg-[var(--teal)]/10 rounded-full transition-colors cursor-pointer"
+                >
+                  Iniciar sesión
+                </Link>
+                <Link 
+                  href="/register" 
+                  className="px-4 py-2 text-xs font-bold bg-[var(--teal)] text-white rounded-full hover:bg-[var(--teal-dark)] transition-all shadow-sm cursor-pointer"
+                >
+                  Registrarse
+                </Link>
+              </div>
+            </div>
+          )}
         </div>
 
         <div className="grid grid-cols-3 gap-8">
