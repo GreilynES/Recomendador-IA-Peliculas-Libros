@@ -94,7 +94,7 @@ async function searchBook(title: string) {
     reason: "",
     emoji: "📚",
     color: "linear-gradient(135deg, #C98663, #8f5538)",
-    imageUrl: book.imageLinks?.thumbnail || null,
+    imageUrl: (book.imageLinks?.thumbnail || book.imageLinks?.smallThumbnail)?.replace("http://", "https://") || null,
   }
 }
 
