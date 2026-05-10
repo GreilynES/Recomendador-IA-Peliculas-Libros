@@ -12,6 +12,7 @@ export type Recommendation = {
   color: string
   tags: string[]
   stats: { label: string; value: string }[]
+  imageUrl?: string | null
 }
 
 export const RECOMMENDATIONS: Recommendation[] = [

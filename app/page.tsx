@@ -8,7 +8,8 @@ import { LoadingScreen } from "@/components/loading-screen"
 import { ResultsPage } from "@/components/results-page"
 import { DetailPage } from "@/components/detail-page"
 import { RECOMMENDATIONS, type Recommendation } from "@/lib/data"
-import { supabase } from "@/lib/lib/supabaseClient"
+import { supabase } from "@/lib/supabase"
+import { getDetailedRecommendations } from "@/lib/recommendations"
 
 
 type Screen = "landing" | "preferences" | "loading" | "results" | "detail"
@@ -35,102 +36,99 @@ const handleExample = () => {
 }
 
   const handlePreferencesSubmit = async (prefs: Preferences) => {
-    const { data: usuario, error: userError } = await supabase
-      .from("usuarios")
-      .insert([
-        {
-          nombre: prefs.name,
-        },
-      ])
-      .select()
-      .single()
+    setScreen("loading") // Move this here to show loading immediately
+    
+    try {
+      const { data: usuario, error: userError } = await supabase
+        .from("usuarios")
+        .insert([
+          {
+            nombre: prefs.name || "Usuario Anónimo",
+          },
+        ])
+        .select()
+        .single()
 
-    if (userError) {
-      console.error("Error creando usuario:", userError)
-      alert("No se pudo crear el usuario")
-      return
+      if (userError) {
+        console.error("Error creando usuario:", userError)
+      }
+
+      const userId = usuario?.id
+
+      const actores = prefs.movieActors
+        ? prefs.movieActors.split(",").map((a) => a.trim()).filter(Boolean)
+        : []
+
+      const autores = prefs.bookAuthors
+        ? prefs.bookAuthors.split(",").map((a) => a.trim()).filter(Boolean)
+        : []
+
+      if (userId) {
+        const { error: prefsError } = await supabase
+          .from("preferencias")
+          .insert([
+            {
+              usuario_id: userId,
+              generos: prefs.genres,
+              actores,
+              autores,
+              // 'temas' removed to match existing schema
+            },
+          ])
+        if (prefsError) console.error("Error guardando preferencias:", prefsError)
+      }
+
+      // Fetch real recommendations from our API route
+      const apiResponse = await fetch("/api/recommend", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(prefs),
+      });
+
+      if (!apiResponse.ok) {
+        throw new Error("Error en la petición a la API");
+      }
+
+      const { recommendations: generatedRecommendations } = await apiResponse.json();
+      setRecommendations(generatedRecommendations)
+
+
+      if (userId) {
+        const tipoRecomendacion =
+          prefs.mediaType === "movies"
+            ? "película"
+            : prefs.mediaType === "books"
+              ? "libro"
+              : "ambos"
+
+        const consultaTexto = `Géneros: ${prefs.genres.join(", ")} | Ánimo: ${prefs.mood} | Historia: ${prefs.storyType}`
+
+        const { error: historialError } = await supabase
+          .from("historial")
+          .insert([
+            {
+              usuario_id: userId,
+              tipo_recomendacion: tipoRecomendacion,
+              consulta: consultaTexto,
+              resultado: generatedRecommendations, // Guardamos el JSON completo de recomendaciones
+            },
+          ])
+
+        if (historialError) {
+          console.error("Error guardando historial:", historialError)
+        }
+      }
+
+
+      setPreferences(prefs)
+      setScreen("results") // Directly go to results after loading data
+    } catch (error) {
+      console.error("Error in recommendation flow:", error)
+      alert("Hubo un error al generar las recomendaciones. Por favor verifica tus API keys.")
+      setScreen("preferences")
     }
-
-    const actores = prefs.movieActors
-      ? prefs.movieActors.split(",").map((a) => a.trim()).filter(Boolean)
-      : []
-
-    const autores = prefs.bookAuthors
-      ? prefs.bookAuthors.split(",").map((a) => a.trim()).filter(Boolean)
-      : []
-
-    const { error: prefsError } = await supabase
-      .from("preferencias")
-      .insert([
-        {
-          usuario_id: usuario.id,
-          generos: prefs.genres,
-          actores,
-          autores,
-        },
-      ])
-
-    if (prefsError) {
-      console.error("Error guardando preferencias:", prefsError)
-      alert("No se pudieron guardar las preferencias")
-      return
-    }
-
-
-    let generatedRecommendations = [...RECOMMENDATIONS]
-
-if (prefs.mediaType === "movies") {
-  generatedRecommendations = RECOMMENDATIONS.filter(
-    (r) => r.type === "movie"
-  )
-}
-
-if (prefs.mediaType === "books") {
-  generatedRecommendations = RECOMMENDATIONS.filter(
-    (r) => r.type === "book"
-  )
-}
-
-setRecommendations(generatedRecommendations)
-
-const historialPayload = generatedRecommendations.map((r) => ({
-  titulo: r.title,
-  tipo: r.type,
-}))
-
-const tipoRecomendacion =
-  prefs.mediaType === "movies"
-    ? "peliculas"
-    : prefs.mediaType === "books"
-      ? "libros"
-      : "ambos"
-
-const consultaTexto = `
-Nombre: ${prefs.name}
-Géneros: ${prefs.genres.join(", ")}
-Historia: ${prefs.storyType}
-Estado: ${prefs.mood}
-`
-
-const { error: historialError } = await supabase
-  .from("historial")
-  .insert([
-    {
-      usuario_id: usuario.id,
-      tipo_recomendacion: tipoRecomendacion,
-      consulta: consultaTexto,
-      resultado: historialPayload,
-    },
-  ])
-
-if (historialError) {
-  console.error("Error guardando historial:", historialError)
-}
-
-
-    setPreferences(prefs)
-    setScreen("loading")
   }
+
 
   const handleLoadingComplete = useCallback(() => {
     setScreen("results")
@@ -171,8 +169,9 @@ if (historialError) {
       )}
 
       {screen === "loading" && (
-        <LoadingScreen onComplete={handleLoadingComplete} />
+        <LoadingScreen />
       )}
+
 
       {screen === "results" && preferences && (
         <ResultsPage
