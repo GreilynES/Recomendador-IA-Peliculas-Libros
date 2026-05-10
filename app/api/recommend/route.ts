@@ -1,9 +1,8 @@
-import OpenAI from "openai"
+import { GoogleGenerativeAI } from "@google/generative-ai"
 import { NextResponse } from "next/server"
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-})
+const genAI = new GoogleGenerativeAI(process.env.GOOGLE_GEMINI_API_KEY || "")
+
 
 type PreferencesBody = {
   name: string
@@ -15,10 +14,13 @@ type PreferencesBody = {
   mediaType: "movies" | "books" | "both"
 }
 
-type AiRecommendation = {
-  title: string
-  type: "movie" | "book"
-  reason: string
+interface AiRecommendation {
+  title: string;
+  type: "movie" | "book";
+  reason: string;
+  fullReason: string;
+  synopsis: string;
+  tags: string[];
 }
 
 async function searchMovie(title: string) {
@@ -27,16 +29,17 @@ async function searchMovie(title: string) {
   if (!apiKey) return null
 
   const url = new URL("https://api.themoviedb.org/3/search/movie")
+  url.searchParams.set("api_key", apiKey)
   url.searchParams.set("query", title)
   url.searchParams.set("language", "es-ES")
   url.searchParams.set("page", "1")
 
   const response = await fetch(url.toString(), {
     headers: {
-      Authorization: `Bearer ${apiKey}`,
       accept: "application/json",
     },
   })
+
 
   if (!response.ok) return null
 
@@ -68,6 +71,9 @@ async function searchBook(title: string) {
   url.searchParams.set("q", title)
   url.searchParams.set("maxResults", "1")
   url.searchParams.set("langRestrict", "es")
+  
+  const apiKey = process.env.GOOGLE_BOOKS_API_KEY
+  if (apiKey) url.searchParams.set("key", apiKey)
 
   const response = await fetch(url.toString())
 
@@ -95,6 +101,8 @@ async function searchBook(title: string) {
 export async function POST(request: Request) {
   try {
     const preferences = (await request.json()) as PreferencesBody
+    console.log("Usando API Key (primeros 5 caracteres):", process.env.GOOGLE_GEMINI_API_KEY?.substring(0, 5))
+
 
     const prompt = `
 Eres un recomendador inteligente de libros y películas.
@@ -123,47 +131,65 @@ Formato:
   {
     "title": "Nombre del título",
     "type": "movie",
-    "reason": "Motivo breve de recomendación"
+    "reason": "Motivo breve",
+    "fullReason": "Explicación detallada",
+    "synopsis": "Resumen de la trama",
+    "tags": ["etiqueta1", "etiqueta2"]
   }
 ]
 `
 
-    const aiResponse = await openai.responses.create({
-      model: "gpt-4.1-mini",
-      input: prompt,
+    const model = genAI.getGenerativeModel({ 
+      model: "gemini-flash-latest",
+      generationConfig: {
+        responseMimeType: "application/json",
+      }
     })
 
-    const text = aiResponse.output_text || "[]"
-    const aiRecommendations = JSON.parse(text) as AiRecommendation[]
+
+
+
+    const result = await model.generateContent(prompt)
+    const response = await result.response
+    const text = response.text()
+    
+    let aiRecommendations: AiRecommendation[] = []
+    try {
+      // Intentar parsear directamente si Gemini respetó el responseMimeType
+      aiRecommendations = JSON.parse(text)
+    } catch (e) {
+      // Si falla, intentar extraer de bloques de código markdown
+      const jsonMatch = text.match(/\[[\s\S]*\]/)
+      const cleanText = jsonMatch ? jsonMatch[0] : "[]"
+      aiRecommendations = JSON.parse(cleanText)
+    }
+
 
     const enrichedResults = await Promise.all(
       aiRecommendations.map(async (rec) => {
-        const result =
+        const externalData =
           rec.type === "movie"
             ? await searchMovie(rec.title)
             : await searchBook(rec.title)
 
-        if (!result) {
-          return {
-            id: `${rec.type}-${rec.title}`,
-            title: rec.title,
-            type: rec.type,
-            genre: rec.type === "movie" ? "Película" : "Libro",
-            meta: rec.type === "movie" ? "TMDb" : "Google Books",
-            description: "No se encontró información detallada en la API externa.",
-            reason: rec.reason,
-            emoji: rec.type === "movie" ? "🎬" : "📚",
-            color:
-              rec.type === "movie"
-                ? "linear-gradient(135deg, #2F7C7A, #1f4f4e)"
-                : "linear-gradient(135deg, #C98663, #8f5538)",
-            imageUrl: null,
-          }
-        }
-
         return {
-          ...result,
+          id: externalData?.id || `${rec.type}-${rec.title}-${Math.random().toString(36).substring(7)}`,
+          title: externalData?.title || rec.title,
+          type: rec.type,
+          genre: externalData?.genre || (rec.type === "movie" ? "Película" : "Libro"),
+          meta: externalData?.meta || (rec.type === "movie" ? "TMDb" : "Google Books"),
+          description: externalData?.description || rec.reason,
           reason: rec.reason,
+          fullReason: rec.fullReason || rec.reason,
+          synopsis: externalData?.description || rec.synopsis || "Sinopsis no disponible.",
+          emoji: externalData?.emoji || (rec.type === "movie" ? "🎬" : "📚"),
+          color: externalData?.color || (rec.type === "movie" ? "linear-gradient(135deg, #2F7C7A, #1f4f4e)" : "linear-gradient(135deg, #C98663, #8f5538)"),
+          imageUrl: externalData?.imageUrl || null,
+          tags: rec.tags || [],
+          stats: (externalData as any)?.stats || [
+            { label: "Fuente", value: rec.type === "movie" ? "TMDb" : "Google Books" },
+            { label: "Tipo", value: rec.type === "movie" ? "Film" : "Lectura" }
+          ]
         }
       })
     )

@@ -30,12 +30,22 @@ export function DetailPage({ recommendation: rec, onBack, onNewSearch }: DetailP
         <div className="grid grid-cols-3 gap-12">
           {/* Left — Poster */}
           <div className="col-span-1">
-            <div
-              className="w-full aspect-[2/3] rounded-3xl overflow-hidden shadow-2xl flex items-center justify-center"
-              style={{ background: rec.color }}
-            >
-              <span className="text-9xl">{rec.emoji}</span>
-            </div>
+            {rec.imageUrl ? (
+              <div className="w-full aspect-[2/3] rounded-3xl overflow-hidden shadow-2xl">
+                <img 
+                  src={rec.imageUrl} 
+                  alt={rec.title}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            ) : (
+              <div
+                className="w-full aspect-[2/3] rounded-3xl overflow-hidden shadow-2xl flex items-center justify-center"
+                style={{ background: rec.color }}
+              >
+                <span className="text-9xl">{rec.emoji}</span>
+              </div>
+            )}
 
             {/* Action buttons */}
             <div className="mt-6 flex flex-col gap-3">
@@ -83,7 +93,7 @@ export function DetailPage({ recommendation: rec, onBack, onNewSearch }: DetailP
 
             {/* Stats */}
             <div className="grid grid-cols-3 gap-4">
-              {rec.stats.map((stat) => (
+              {rec.stats?.map((stat) => (
                 <div key={stat.label} className="bg-[var(--card)] rounded-2xl p-5 border border-[var(--border)] shadow-sm">
                   <p className="text-xs text-[var(--muted-foreground)] uppercase tracking-wider mb-1">{stat.label}</p>
                   <p className="font-serif text-xl font-bold text-[var(--foreground)]">{stat.value}</p>
@@ -116,7 +126,7 @@ export function DetailPage({ recommendation: rec, onBack, onNewSearch }: DetailP
             <div>
               <p className="text-xs uppercase tracking-widest text-[var(--muted-foreground)] font-medium mb-3">Etiquetas</p>
               <div className="flex flex-wrap gap-2">
-                {rec.tags.map((tag) => (
+                {rec.tags?.map((tag) => (
                   <span key={tag} className="px-3 py-1.5 rounded-full bg-[var(--beige)] text-[var(--foreground)] text-sm">
                     {tag}
                   </span>
