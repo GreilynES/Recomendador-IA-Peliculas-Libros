@@ -172,12 +172,20 @@ function RecommendationCard({ rec, isFavorite, onToggleFavorite, onClick }: Card
     >
       {/* Poster */}
       <div className="relative aspect-[2/3] overflow-hidden bg-[var(--beige)]">
-        <div
-          className="absolute inset-0 flex items-center justify-center"
-          style={{ background: rec.color }}
-        >
-          <span className="text-5xl">{rec.emoji}</span>
-        </div>
+        {rec.imageUrl ? (
+          <img 
+            src={rec.imageUrl} 
+            alt={rec.title}
+            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+          />
+        ) : (
+          <div
+            className="absolute inset-0 flex items-center justify-center"
+            style={{ background: rec.color }}
+          >
+            <span className="text-5xl">{rec.emoji}</span>
+          </div>
+        )}
         {/* Type badge */}
         <div className="absolute top-3 left-3">
           <span className={cn(

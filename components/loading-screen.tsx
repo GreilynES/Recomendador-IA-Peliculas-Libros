@@ -10,11 +10,8 @@ const MESSAGES = [
   "Casi listo, preparando tu lista personalizada...",
 ]
 
-type LoadingScreenProps = {
-  onComplete: () => void
-}
+export function LoadingScreen() {
 
-export function LoadingScreen({ onComplete }: LoadingScreenProps) {
   const [messageIndex, setMessageIndex] = useState(0)
   const [progress, setProgress] = useState(0)
 
@@ -28,16 +25,13 @@ export function LoadingScreen({ onComplete }: LoadingScreenProps) {
   useEffect(() => {
     const progressInterval = setInterval(() => {
       setProgress((p) => {
-        if (p >= 100) {
-          clearInterval(progressInterval)
-          setTimeout(onComplete, 400)
-          return 100
-        }
+        if (p >= 95) return p; // Wait at 95% until parent switches
         return p + 2
       })
-    }, 60)
+    }, 100)
     return () => clearInterval(progressInterval)
-  }, [onComplete])
+  }, [])
+
 
   return (
     <main className="min-h-screen bg-[var(--background)] flex flex-col items-center justify-center">
