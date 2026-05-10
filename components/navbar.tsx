@@ -6,9 +6,10 @@ import Link from "next/link"
 type NavbarProps = {
   variant?: "transparent" | "solid"
   onStartClick?: () => void
+  onLoginClick?: () => void
 }
 
-export function Navbar({ variant = "solid", onStartClick }: NavbarProps) {
+export function Navbar({ variant = "solid", onStartClick, onLoginClick }: NavbarProps) {
   const [menuOpen, setMenuOpen] = useState(false)
 
   return (
@@ -89,8 +90,14 @@ export function Navbar({ variant = "solid", onStartClick }: NavbarProps) {
             Favoritos
           </Link>
           <button
+            onClick={() => { onLoginClick?.(); setMenuOpen(false) }}
+            className="mt-2 w-full px-5 py-2.5 rounded-full text-[var(--muted-foreground)] text-sm font-medium border border-[var(--border)]"
+          >
+            Iniciar sesión
+          </button>
+          <button
             onClick={() => { onStartClick?.(); setMenuOpen(false) }}
-            className="mt-2 w-full px-5 py-2.5 rounded-full bg-[var(--teal)] text-[var(--primary-foreground)] text-sm font-medium"
+            className="w-full px-5 py-2.5 rounded-full bg-[var(--teal)] text-[var(--primary-foreground)] text-sm font-medium"
           >
             Comenzar gratis
           </button>

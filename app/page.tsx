@@ -7,12 +7,14 @@ import { PreferencesForm, type Preferences } from "@/components/preferences-form
 import { LoadingScreen } from "@/components/loading-screen"
 import { ResultsPage } from "@/components/results-page"
 import { DetailPage } from "@/components/detail-page"
+
 import { RECOMMENDATIONS, type Recommendation } from "@/lib/data"
 import { supabase } from "@/lib/supabase"
 import { getDetailedRecommendations } from "@/lib/recommendations"
+import { AuthForm } from "@/components/ui/auth-form"
 
 
-type Screen = "landing" | "preferences" | "loading" | "results" | "detail"
+type Screen = "landing" | "preferences" | "loading" | "results" | "detail" | "login" | "register"
 
 export default function Home() {
   const [screen, setScreen] = useState<Screen>("landing")
@@ -20,24 +22,24 @@ export default function Home() {
   const [selectedRec, setSelectedRec] = useState<Recommendation | null>(null)
   const [recommendations, setRecommendations] = useState<Recommendation[]>([])
 
-  const handleStart = () => setScreen("preferences")
+  const handleStart = () => setScreen("register")
 
-const handleExample = () => {
-  setPreferences({
-    name: "Usuario ejemplo",
-    genres: ["Drama", "Ciencia Ficción", "Fantasía"],
-    movieActors: "Cate Blanchett",
-    bookAuthors: "García Márquez",
-    storyType: "Reflexivo",
-    mood: "Quiero pensar",
-    mediaType: "both",
-  })
-  setScreen("loading")
-}
+  const handleExample = () => {
+    setPreferences({
+      name: "Usuario ejemplo",
+      genres: ["Drama", "Ciencia Ficción", "Fantasía"],
+      movieActors: "Cate Blanchett",
+      bookAuthors: "García Márquez",
+      storyType: "Reflexivo",
+      mood: "Quiero pensar",
+      mediaType: "both",
+    })
+    setScreen("loading")
+  }
 
   const handlePreferencesSubmit = async (prefs: Preferences) => {
     setScreen("loading") // Move this here to show loading immediately
-    
+
     try {
       const { data: usuario, error: userError } = await supabase
         .from("usuarios")
@@ -146,7 +148,7 @@ const handleExample = () => {
   }
 
 
-  const showNavbar = screen !== "loading"
+  const showNavbar = screen !== "loading" && screen !== "login" && screen !== "register"
 
   return (
     <>
@@ -154,6 +156,7 @@ const handleExample = () => {
         <Navbar
           variant={screen === "landing" ? "solid" : "solid"}
           onStartClick={handleStart}
+          onLoginClick={() => setScreen("login")}
         />
       )}
 
@@ -180,6 +183,22 @@ const handleExample = () => {
           onViewDetail={handleViewDetail}
           onEditPreferences={() => setScreen("preferences")}
           onNewSearch={handleNewSearch}
+        />
+      )}
+
+      {screen === "register" && (
+        <AuthForm
+          initialMode="register"
+          onSuccess={() => setScreen("preferences")}
+          onBack={() => setScreen("landing")}
+        />
+      )}
+
+      {screen === "login" && (
+        <AuthForm
+          initialMode="login"
+          onSuccess={() => setScreen("preferences")}
+          onBack={() => setScreen("landing")}
         />
       )}
 
