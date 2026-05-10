@@ -7,181 +7,299 @@ type LandingPageProps = {
   onExample: () => void
 }
 
+const MOODS = [
+  { label: "Comforting", icon: "☕" },
+  { label: "Dark & Mysterious", icon: "🕯" },
+  { label: "Make me cry", icon: "🌧" },
+  { label: "Feel good", icon: "✨" },
+  { label: "Slow burn", icon: "🌙" },
+  { label: "Adventurero", icon: "⛰️" },
+  { label: "Romantic", icon: "🌹" },
+  { label: "Mind bending", icon: "🌀" },
+]
+
+const grain = `url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='512' height='512' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E")`
+
 export function LandingPage({ onStart, onExample }: LandingPageProps) {
   return (
-    <main className="min-h-screen bg-[var(--background)]">
-      {/* Hero */}
-      <section className="pt-32 pb-20 max-w-7xl mx-auto px-8">
-        <div className="grid grid-cols-2 gap-16 items-center min-h-[calc(100vh-8rem)]">
-          {/* Left */}
-          <div className="flex flex-col gap-8">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[var(--beige)] border border-[var(--border)] w-fit">
-              <span className="w-2 h-2 rounded-full bg-[var(--teal)]" />
-              <span className="text-xs font-medium text-[var(--muted-foreground)] uppercase tracking-widest">
-                Recomendaciones con IA
-              </span>
-            </div>
+    <main className="min-h-screen overflow-hidden">
 
-            <h1 className="font-serif text-6xl font-bold leading-tight text-[var(--foreground)] text-balance">
-              Descubre tu próxima historia{" "}
-              <span className="text-[var(--teal)] italic">favorita</span>
-            </h1>
+      {/* HERO */}
+      <section className="relative min-h-screen flex items-center overflow-hidden">
 
-            <p className="text-lg text-[var(--muted-foreground)] leading-relaxed max-w-md">
-              Lumina analiza tus gustos, estado de ánimo y preferencias para recomendarte
-              películas y libros que realmente disfrutarás. Personalizado, inteligente y
-              siempre relevante.
-            </p>
+        <Image
+          src="/ImgLanding.png"
+          alt="Composición cinematográfica"
+          fill
+          className="object-cover object-center"
+          priority
+        />
 
-            <div className="flex items-center gap-4">
-              <button
-                onClick={onStart}
-                className="group px-8 py-4 rounded-full bg-[var(--teal)] text-[var(--primary-foreground)] font-medium text-base hover:bg-[var(--teal-dark)] transition-all duration-200 shadow-md hover:shadow-lg hover:-translate-y-0.5 cursor-pointer"
-              >
-                Comenzar
-                <span className="inline-block ml-2 group-hover:translate-x-1 transition-transform">→</span>
-              </button>
-              <button
-                onClick={onExample}
-                className="px-8 py-4 rounded-full border border-[var(--border)] text-[var(--foreground)] font-medium text-base hover:bg-[var(--beige)] transition-all duration-200 cursor-pointer"
-              >
-                Ver ejemplo
-              </button>
-            </div>
+        <div className="absolute inset-0" style={{ background: "linear-gradient(to right, rgba(0,0,0,0.0) 0%, rgba(0,0,0,0.25) 35%, rgba(8,5,2,0.78) 65%, rgba(8,5,2,0.92) 100%)" }} />
+        <div className="absolute inset-0" style={{ background: "linear-gradient(to bottom, rgba(0,0,0,0.4) 0%, transparent 18%)" }} />
+        <div className="absolute inset-0 bg-[#4A2E1A]/8" />
+        <div className="absolute inset-0 pointer-events-none opacity-[0.03]"
+          style={{ backgroundImage: grain, backgroundSize: "256px 256px" }} />
 
-            {/* Social proof */}
-            <div className="flex items-center gap-6 pt-4 border-t border-[var(--border)]">
-              <div className="flex -space-x-2">
-                {["#2F7C7A", "#C98663", "#7a7068", "#2F2F33"].map((color, i) => (
-                  <div
-                    key={i}
-                    className="w-8 h-8 rounded-full border-2 border-[var(--cream)] flex items-center justify-center text-xs text-white font-medium"
-                    style={{ backgroundColor: color }}
-                  >
-                    {["A", "B", "C", "D"][i]}
-                  </div>
-                ))}
-              </div>
-              <p className="text-sm text-[var(--muted-foreground)]">
-                <span className="font-semibold text-[var(--foreground)]">+2,400</span> lectores y
-                cinéfilos ya lo usan
+        <div className="relative z-10 w-full max-w-7xl mx-auto px-20 py-40">
+          <div className="flex justify-end">
+            <div className="flex flex-col gap-8 max-w-xl text-right pr-8">
+
+              <h1 className="font-serif text-5xl lg:text-7xl font-light leading-[1.05] text-[#F3E8D7] tracking-tight"
+                style={{ textShadow: "0 2px 40px rgba(0,0,0,0.5)" }}>
+                Historias que{" "}
+                <span className="text-[#C7A27C] italic font-extralight">se quedan</span>{" "}
+                contigo.
+              </h1>
+
+              <p className="text-[#BBA892] text-12px leading-relaxed"
+                style={{ textShadow: "0 1px 20px rgba(0,0,0,0.6)" }}>
+                Recomendaciones personalizadas basadas en tu ánimo, gusto y curiosidad. Lumina entiende cómo te sientes, no solo lo que has visto.
               </p>
-            </div>
-          </div>
 
-          {/* Right */}
-          <div className="relative">
-            <div className="relative w-full aspect-[4/5] rounded-3xl overflow-hidden shadow-2xl">
-              <Image
-                src="/hero-collage.jpg"
-                alt="Colección de libros y películas"
-                fill
-                className="object-cover"
-                priority
-              />
-              {/* Floating card 1 */}
-              <div className="absolute bottom-8 left-6 bg-[var(--warm-white)]/95 backdrop-blur-sm rounded-2xl p-4 shadow-xl flex items-center gap-3 max-w-52">
-                <div className="w-10 h-10 rounded-xl bg-[var(--teal)] flex items-center justify-center flex-shrink-0">
-                  <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
-                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                  </svg>
-                </div>
-                <div>
-                  <p className="text-xs font-semibold text-[var(--foreground)]">Recomendación perfecta</p>
-                  <p className="text-xs text-[var(--muted-foreground)]">98% de coincidencia</p>
-                </div>
-              </div>
-              {/* Floating card 2 */}
-              <div className="absolute top-8 right-6 bg-[var(--warm-white)]/95 backdrop-blur-sm rounded-2xl p-4 shadow-xl">
-                <p className="text-xs font-semibold text-[var(--foreground)] mb-1">Tu próxima lectura</p>
-                <p className="text-xs text-[var(--teal)] font-medium">El nombre del viento</p>
-                <p className="text-xs text-[var(--muted-foreground)]">Fantasía · Patrick Rothfuss</p>
+              <div className="flex items-center gap-4 pt-1 justify-end">
+                <button onClick={onExample}
+                  className="flex items-center gap-2 px-7 py-4 rounded-full text-sm font-semibold text-[#BBA892] transition-all hover:text-[#F3E8D7] cursor-pointer"
+                  style={{ border: "1px solid rgba(199,162,124,0.35)", backdropFilter: "blur(8px)", background: "rgba(0,0,0,0.2)" }}>
+                  <span className="w-5 h-5 rounded-full border border-[#C7A27C]/50 flex items-center justify-center text-[10px]">▶</span>
+                  Cómo funciona
+                </button>
+                <button onClick={onStart}
+                  className="group flex items-center gap-2 px-8 py-4 rounded-full font-semibold text-sm text-[#0D0A07] transition-all duration-300 hover:-translate-y-1 cursor-pointer"
+                  style={{ background: "#C7A27C"}}>
+                  Comenzar ahora
+                </button>
               </div>
             </div>
           </div>
         </div>
+
+        <div className="absolute bottom-0 left-0 right-0 leading-none">
+          <svg viewBox="0 0 1440 64" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full block">
+            <path d="M0 64L1440 64L1440 24C1200 64 960 4 720 24C480 44 240 4 0 24L0 64Z" fill="#F5F0E8"/>
+          </svg>
+        </div>
       </section>
 
-      {/* How it works */}
-      <section id="como-funciona" className="py-24 bg-[var(--beige)]">
-        <div className="max-w-7xl mx-auto px-8">
-          <div className="text-center mb-16">
-            <p className="text-xs uppercase tracking-widest text-[var(--terracotta)] font-medium mb-4">El proceso</p>
-            <h2 className="font-serif text-4xl font-bold text-[var(--foreground)] text-balance">
-              Tres pasos hacia tu próxima historia
-            </h2>
+      {/* MOOD SELECTOR — CREAM */}
+      <section className="relative bg-[#F5F0E8] py-28" id="como-funciona">
+        <div className="absolute inset-0 pointer-events-none opacity-[0.02]"
+          style={{ backgroundImage: grain, backgroundSize: "256px 256px" }} />
+
+        <div className="max-w-7xl mx-auto px-20 relative z-10">
+          <div className="mb-10">
+            <p className="text-[#8B5E4A] text-[10px] uppercase tracking-[0.3em] font-semibold mb-3">Discover by mood</p>
+            <h2 className="font-serif text-5xl font-light text-[#1C1410] tracking-tight">¿Qué estás buscando?</h2>
+            <p className="text-[#6F5A4E] mt-3 max-w-xl">Elegí cómo te sentís hoy y Lumina hace el resto.</p>
           </div>
-          <div className="grid grid-cols-3 gap-8">
-            {[
-              {
-                step: "01",
-                title: "Cuéntanos tus gustos",
-                desc: "Selecciona géneros, actores, autores y el estado de ánimo con el que quieres comenzar.",
-                icon: (
-                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                  </svg>
-                ),
-              },
-              {
-                step: "02",
-                title: "La IA los analiza",
-                desc: "Nuestro motor inteligente cruza tus preferencias con miles de títulos y te genera un perfil único.",
-                icon: (
-                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
-                  </svg>
-                ),
-              },
-              {
-                step: "03",
-                title: "Recibe tu lista",
-                desc: "Explora recomendaciones personalizadas de películas y libros, con el motivo exacto por el que te las sugerimos.",
-                icon: (
-                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-                  </svg>
-                ),
-              },
-            ].map((item) => (
-              <div key={item.step} className="bg-[var(--warm-white)] rounded-2xl p-8 shadow-sm hover:shadow-md transition-shadow">
-                <div className="flex items-start justify-between mb-6">
-                  <div className="w-12 h-12 rounded-xl bg-[var(--teal)]/10 flex items-center justify-center text-[var(--teal)]">
-                    {item.icon}
+          <div className="flex flex-wrap gap-3">
+            {MOODS.map((mood) => (
+              <button key={mood.label}
+                className="flex items-center gap-2 px-5 py-3 rounded-full text-sm font-medium text-[#4A3728] transition-all duration-200 hover:-translate-y-0.5 cursor-pointer"
+                style={{ background: "#EDE5D8", border: "1px solid rgba(139,94,74,0.2)" }}
+                onMouseEnter={e => {
+                  (e.currentTarget as HTMLElement).style.background = "#8B5E4A"
+                  ;(e.currentTarget as HTMLElement).style.color = "#F5F0E8"
+                }}
+                onMouseLeave={e => {
+                  (e.currentTarget as HTMLElement).style.background = "#EDE5D8"
+                  ;(e.currentTarget as HTMLElement).style.color = "#4A3728"
+                }}>
+                <span>{mood.icon}</span>{mood.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className="absolute bottom-0 left-0 right-0 leading-none">
+          <svg viewBox="0 0 1440 64" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full block">
+            <path d="M0 0L1440 0L1440 40C1200 0 960 64 720 40C480 16 240 64 0 40L0 0Z" fill="#13100C"/>
+          </svg>
+        </div>
+      </section>
+
+      {/* HOW IT WORKS — DARK */}
+      <section className="relative bg-[#13100C] py-28 overflow-hidden">
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] bg-[#C7A27C]/4 rounded-full blur-[100px]" />
+        </div>
+        <div className="max-w-7xl mx-auto px-20 relative z-10">
+          <div className="grid grid-cols-2 gap-20 items-center">
+            <div className="relative">
+              <div className="aspect-[4/3] rounded-2xl overflow-hidden relative"
+                style={{ boxShadow: "0 24px 80px rgba(0,0,0,0.6)" }}>
+                <Image src="/ImgLanding.png" alt="Biblioteca" fill className="object-cover opacity-60" />
+                <div className="absolute inset-0 bg-gradient-to-br from-[#C7A27C]/20 to-[#0D0A07]/60" />
+              </div>
+              <div className="absolute -bottom-6 -right-6 rounded-2xl p-5"
+                style={{ background: "rgba(23,18,14,0.95)", border: "1px solid rgba(199,162,124,0.2)", backdropFilter: "blur(20px)" }}>
+                <p className="text-[#C7A27C] font-serif text-3xl font-light italic">3</p>
+                <p className="text-[#BBA892] text-xs mt-1">pasos simples</p>
+              </div>
+            </div>
+            <div className="flex flex-col gap-8">
+              <div>
+                <p className="text-[#C7A27C]/60 text-[10px] uppercase tracking-[0.3em] font-semibold mb-3">How it works</p>
+                <h2 className="font-serif text-5xl font-light text-[#F3E8D7] leading-tight tracking-tight">Tu próxima historia en 3 pasos</h2>
+              </div>
+              {[
+                { icon: "😊", label: "Cuéntanos tu ánimo", desc: "Elegí cómo te sentís hoy o describí qué tipo de historia necesitás." },
+                { icon: "✨", label: "Encontramos el match", desc: "Nuestra IA analiza patrones emocionales y selecciona títulos que resuenan con vos." },
+                { icon: "📖", label: "Descubrí y disfrutá", desc: "Guardá, valorá y explorá las historias que se quedan con vos." },
+              ].map((step, i) => (
+                <div key={i} className="flex gap-5 items-start">
+                  <div className="w-12 h-12 rounded-xl flex items-center justify-center text-xl flex-shrink-0"
+                    style={{ background: "rgba(199,162,124,0.1)", border: "1px solid rgba(199,162,124,0.2)" }}>
+                    {step.icon}
                   </div>
-                  <span className="font-serif text-4xl font-bold text-[var(--border)]">{item.step}</span>
+                  <div>
+                    <h3 className="font-serif text-xl font-normal italic text-[#F3E8D7] mb-1">{step.label}</h3>
+                    <p className="text-[#BBA892] text-sm leading-relaxed">{step.desc}</p>
+                  </div>
                 </div>
-                <h3 className="font-serif text-xl font-semibold text-[var(--foreground)] mb-3">{item.title}</h3>
-                <p className="text-sm text-[var(--muted-foreground)] leading-relaxed">{item.desc}</p>
+              ))}
+              <button onClick={onStart}
+                className="w-fit px-8 py-4 rounded-full font-semibold text-sm text-[#0D0A07] transition-all hover:-translate-y-0.5 cursor-pointer mt-2"
+                style={{ background: "#C7A27C" }}>
+                Comenzar ahora
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div className="absolute bottom-0 left-0 right-0 leading-none">
+          <svg viewBox="0 0 1440 64" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full block">
+            <path d="M0 64L1440 64L1440 24C1200 64 960 4 720 24C480 44 240 4 0 24L0 64Z" fill="#F5F0E8"/>
+          </svg>
+        </div>
+      </section>
+
+      {/* TICKER */}
+      <section className="bg-[#F5F0E8] overflow-hidden" style={{ borderTop: "1px solid rgba(139,94,74,0.12)", borderBottom: "1px solid rgba(139,94,74,0.12)" }}>
+        <div className="flex whitespace-nowrap" style={{ animation: "ticker 24s linear infinite" }}>
+          {Array.from({ length: 4 }).map((_, i) => (
+            <div key={i} className="flex items-center gap-8 px-8 py-4 flex-shrink-0">
+              {["The Night Circus", "✦", "Dune", "✦", "Before Sunrise", "✦", "A Little Life", "✦", "Past Lives", "✦", "Call Me By Your Name", "✦"].map((item, j) => (
+                <span key={j} className={`text-sm font-medium ${item === "✦" ? "text-[#C7A27C]" : "text-[#6F5A4E]"}`}>{item}</span>
+              ))}
+            </div>
+          ))}
+        </div>
+        <style>{`@keyframes ticker { from { transform: translateX(0) } to { transform: translateX(-25%) } }`}</style>
+      </section>
+
+      {/* VIBE PREVIEW — CREAM */}
+      <section className="relative bg-[#F5F0E8] py-28">
+        <div className="max-w-7xl mx-auto px-20">
+          <div className="grid grid-cols-2 gap-16 items-center">
+            <div className="flex flex-col gap-6">
+              <p className="text-[#8B5E4A] text-[10px] uppercase tracking-[0.3em] font-semibold">Tu vibe actual</p>
+              <h2 className="font-serif text-5xl font-light italic text-[#1C1410] leading-tight tracking-tight">Reflexivo · Íntimo · Nostálgico</h2>
+              <div className="flex flex-wrap gap-2">
+                {["Emotivo", "Hermosa escritura", "Personajes profundos", "Character driven"].map(tag => (
+                  <span key={tag} className="px-3 py-1.5 rounded-full text-xs text-[#4A3728] font-medium"
+                    style={{ background: "#EDE5D8", border: "1px solid rgba(139,94,74,0.2)" }}>{tag}</span>
+                ))}
+              </div>
+              <p className="text-[#6F5A4E] leading-relaxed max-w-sm">
+                Lumina analiza tu perfil emocional y encuentra libros y películas que resuenan exactamente con cómo te sentís hoy.
+              </p>
+              <button onClick={onStart}
+                className="w-fit px-8 py-4 rounded-full font-semibold text-sm text-[#F5F0E8] transition-all hover:-translate-y-0.5 cursor-pointer"
+                style={{ background: "#1C1410", boxShadow: "0 8px 30px rgba(0,0,0,0.2)" }}>
+                Comenzar mi viaje →
+              </button>
+            </div>
+            <div className="grid grid-cols-3 gap-3">
+              {[
+                { title: "A Little Life", sub: "Hanya Yanagihara", rating: "4.6", type: "Libro", bg: "#1E1813" },
+                { title: "Call Me By Your Name", sub: "André Aciman", rating: "4.4", type: "Libro", bg: "#17120E" },
+                { title: "Past Lives", sub: "2023 · Romance", rating: "4.3", type: "Película", bg: "#241C15" },
+              ].map((item, i) => (
+                <div key={i} className="rounded-2xl overflow-hidden flex flex-col"
+                  style={{ background: item.bg, minHeight: 220, border: "1px solid rgba(199,162,124,0.08)", boxShadow: "0 12px 40px rgba(0,0,0,0.25)" }}>
+                  <div className="flex-1 bg-gradient-to-br from-[#C7A27C]/8 to-transparent" />
+                  <div className="p-4">
+                    <span className="text-[#C7A27C] text-[10px] uppercase tracking-wider font-semibold">{item.type}</span>
+                    <p className="font-serif text-sm font-normal text-[#F3E8D7] mt-1 leading-snug">{item.title}</p>
+                    <p className="text-[#BBA892] text-[11px] mt-0.5">{item.sub}</p>
+                    <p className="text-[#C7A27C] text-xs mt-2">★ {item.rating}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <div className="absolute bottom-0 left-0 right-0 leading-none">
+          <svg viewBox="0 0 1440 64" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full block">
+            <path d="M0 0L1440 0L1440 40C1200 0 960 64 720 40C480 16 240 64 0 40L0 0Z" fill="#0D0A07"/>
+          </svg>
+        </div>
+      </section>
+
+      {/* WHY LUMINA — DARK */}
+      <section className="relative bg-[#0D0A07] py-28 overflow-hidden">
+        <div className="absolute top-1/2 right-1/4 w-[600px] h-[400px] bg-[#C7A27C]/4 rounded-full blur-[120px] pointer-events-none" />
+        <div className="max-w-7xl mx-auto px-20 relative z-10">
+          <div className="text-center mb-16">
+            <p className="text-[#C7A27C]/60 text-[10px] uppercase tracking-[0.3em] font-semibold mb-3">Por qué vas a amarlo</p>
+            <h2 className="font-serif text-5xl font-light text-[#F3E8D7] tracking-tight">No es solo una app de recomendaciones</h2>
+          </div>
+          <div className="grid grid-cols-4 gap-4">
+            {[
+              { icon: "⭐", title: "Hecho para vos", desc: "Recomendaciones basadas en tu gusto único y estado de ánimo." },
+              { icon: "💛", title: "Más que ratings", desc: "Encontramos historias que conectan emocionalmente con quién sos." },
+              { icon: "👥", title: "Comunidad", desc: "Unite a miles de personas que aman las historias como vos." },
+              { icon: "✨", title: "Siempre nuevo", desc: "Picks frescos, gemas escondidas y clásicos atemporales." },
+            ].map((item) => (
+              <div key={item.title} className="rounded-2xl p-6 flex flex-col gap-4"
+                style={{ background: "rgba(23,18,14,0.7)", border: "1px solid rgba(199,162,124,0.08)" }}>
+                <span className="text-2xl">{item.icon}</span>
+                <h3 className="font-serif text-lg font-normal italic text-[#F3E8D7]">{item.title}</h3>
+                <p className="text-[#BBA892] text-sm leading-relaxed">{item.desc}</p>
               </div>
             ))}
           </div>
         </div>
+
+        <div className="absolute bottom-0 left-0 right-0 leading-none">
+          <svg viewBox="0 0 1440 64" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full block">
+            <path d="M0 64L1440 64L1440 24C1200 64 960 4 720 24C480 44 240 4 0 24L0 64Z" fill="#F5F0E8"/>
+          </svg>
+        </div>
       </section>
 
-      {/* CTA Banner */}
-      <section className="py-24 max-w-7xl mx-auto px-8">
-        <div className="bg-[var(--teal)] rounded-3xl p-16 flex flex-col items-center text-center gap-6">
-          <p className="text-xs uppercase tracking-widest text-[var(--primary-foreground)]/70 font-medium">Empieza hoy</p>
-          <h2 className="font-serif text-4xl font-bold text-[var(--primary-foreground)] max-w-lg text-balance">
-            Tu próxima historia favorita está a un clic de distancia
+      {/* FINAL CTA — CREAM */}
+      <section className="relative bg-[#F5F0E8] py-32">
+        <div className="max-w-5xl mx-auto px-20 text-center">
+          <p className="text-[#8B5E4A] text-[10px] uppercase tracking-[0.3em] font-semibold mb-5">Tu próxima obsesión</p>
+          <h2 className="font-serif text-6xl font-light text-[#1C1410] max-w-3xl mx-auto leading-tight tracking-tight">
+            ¿Listo para encontrar tu próxima historia{" "}
+            <span className="text-[#8B5E4A] italic font-extralight">inolvidable?</span>
           </h2>
-          <p className="text-[var(--primary-foreground)]/80 max-w-md leading-relaxed">
-            Deja de perder tiempo buscando. Lumina lo hace por ti con inteligencia artificial.
+          <p className="text-[#6F5A4E] mt-6 max-w-xl mx-auto leading-relaxed">
+            Lumina no es una recomendadora genérica. Es tu curadora cinematográfica personal que entiende tu alma.
           </p>
-          <button
-            onClick={onStart}
-            className="mt-2 px-8 py-4 rounded-full bg-[var(--warm-white)] text-[var(--teal)] font-semibold hover:bg-[var(--cream)] transition-colors shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200 cursor-pointer"
-          >
-            Comenzar ahora — es gratis
+          <button onClick={onStart}
+            className="mt-10 px-10 py-4 rounded-full font-semibold text-base text-[#F5F0E8] transition-all duration-300 hover:-translate-y-1 cursor-pointer"
+            style={{ background: "#1C1410", boxShadow: "0 12px 40px rgba(0,0,0,0.2)" }}>
+            Comenzar mi viaje →
           </button>
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="border-t border-[var(--border)] py-10 max-w-7xl mx-auto px-8 flex justify-between items-center">
-        <span className="font-serif text-xl font-bold text-[var(--teal)]">Lumina</span>
-        <p className="text-sm text-[var(--muted-foreground)]">© 2026 Lumina. Todos los derechos reservados.</p>
+      {/* FOOTER — DARK */}
+      <footer className="bg-[#0D0A07] py-14" style={{ borderTop: "1px solid rgba(199,162,124,0.08)" }}>
+        <div className="max-w-7xl mx-auto px-20 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <span className="font-serif text-2xl font-light italic text-[#C7A27C] tracking-wide">Lumina</span>
+            <span className="w-1.5 h-1.5 rounded-full bg-[#C7A27C]/60" />
+          </div>
+          <p className="text-sm text-[#BBA892]/40">
+            © 2026 Lumina. Recomendaciones cinematográficas premium impulsadas por IA.
+          </p>
+        </div>
       </footer>
     </main>
   )
