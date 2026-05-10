@@ -4,7 +4,6 @@ import { useState } from "react"
 import { cn } from "@/lib/utils"
 
 export type Preferences = {
-  name: string
   genres: string[]
   movieActors: string
   bookAuthors: string
@@ -29,7 +28,6 @@ const MOODS = ["Quiero reír", "Quiero llorar", "Quiero pensar", "Quiero escapar
 
 export function PreferencesForm({ onSubmit, onBack }: PreferencesFormProps) {
   const [prefs, setPrefs] = useState<Preferences>({
-    name: "",
     genres: [],
     movieActors: "",
     bookAuthors: "",
@@ -48,13 +46,11 @@ export function PreferencesForm({ onSubmit, onBack }: PreferencesFormProps) {
   }
 
   const isValid =
-    prefs.name.trim() &&
     prefs.genres.length > 0 &&
     prefs.storyType &&
     prefs.mood
 
   const selectedCount = [
-    !!prefs.name.trim(),
     prefs.genres.length > 0,
     !!prefs.movieActors,
     !!prefs.bookAuthors,
@@ -88,28 +84,7 @@ export function PreferencesForm({ onSubmit, onBack }: PreferencesFormProps) {
 
         <div className="grid grid-cols-3 gap-8">
           <div className="col-span-2 flex flex-col gap-8">
-            <section className="bg-[var(--card)] rounded-2xl p-8 shadow-sm border border-[var(--border)]">
-              <h2 className="font-serif text-xl font-semibold text-[var(--foreground)] mb-2">
-                Tu nombre
-              </h2>
 
-              <p className="text-sm text-[var(--muted-foreground)] mb-5">
-                Escribe tu nombre para guardar tus preferencias.
-              </p>
-
-              <input
-                type="text"
-                placeholder="Ej: María"
-                value={prefs.name}
-                onChange={(e) =>
-                  setPrefs((p) => ({
-                    ...p,
-                    name: e.target.value,
-                  }))
-                }
-                className="w-full px-4 py-3 rounded-xl bg-[var(--background)] border border-[var(--border)] text-sm text-[var(--foreground)] placeholder:text-[var(--muted-foreground)] focus:outline-none focus:ring-2 focus:ring-[var(--teal)] focus:border-transparent transition-all"
-              />
-            </section>
 
             <section className="bg-[var(--card)] rounded-2xl p-8 shadow-sm border border-[var(--border)]">
               <h2 className="font-serif text-xl font-semibold text-[var(--foreground)] mb-2">
@@ -282,28 +257,19 @@ export function PreferencesForm({ onSubmit, onBack }: PreferencesFormProps) {
               <div className="mb-5">
                 <div className="flex justify-between text-xs text-[var(--muted-foreground)] mb-2">
                   <span>Completado</span>
-                  <span>{selectedCount}/6 campos</span>
+                  <span>{selectedCount}/5 campos</span>
                 </div>
 
                 <div className="h-2 rounded-full bg-[var(--beige)] overflow-hidden">
                   <div
                     className="h-full rounded-full bg-[var(--teal)] transition-all duration-500"
-                    style={{ width: `${(selectedCount / 6) * 100}%` }}
+                    style={{ width: `${(selectedCount / 5) * 100}%` }}
                   />
                 </div>
               </div>
 
               <div className="flex flex-col gap-3 text-sm">
-                {prefs.name.trim() && (
-                  <div>
-                    <span className="text-xs text-[var(--muted-foreground)] uppercase tracking-wider">
-                      Nombre
-                    </span>
-                    <p className="mt-0.5 font-medium text-[var(--foreground)]">
-                      {prefs.name}
-                    </p>
-                  </div>
-                )}
+
 
                 {prefs.genres.length > 0 && (
                   <div>
@@ -364,7 +330,6 @@ export function PreferencesForm({ onSubmit, onBack }: PreferencesFormProps) {
                 <button
                   onClick={() =>
                     setPrefs({
-                      name: "",
                       genres: [],
                       movieActors: "",
                       bookAuthors: "",
@@ -381,7 +346,7 @@ export function PreferencesForm({ onSubmit, onBack }: PreferencesFormProps) {
 
               {!isValid && (
                 <p className="mt-3 text-xs text-[var(--muted-foreground)] text-center leading-relaxed">
-                  Escribe tu nombre, selecciona al menos un género, tipo de historia y estado de ánimo.
+                  Selecciona al menos un género, tipo de historia y estado de ánimo.
                 </p>
               )}
             </div>
