@@ -4,7 +4,6 @@ import { useState } from "react"
 import { cn } from "@/lib/utils"
 
 export type Preferences = {
-  name: string
   genres: string[]
   movieActors: string
   bookAuthors: string
@@ -49,7 +48,6 @@ const cardStyle = {
 
 export function PreferencesForm({ onSubmit, onBack }: PreferencesFormProps) {
   const [prefs, setPrefs] = useState<Preferences>({
-    name: "",
     genres: [],
     movieActors: "",
     bookAuthors: "",
@@ -67,10 +65,12 @@ export function PreferencesForm({ onSubmit, onBack }: PreferencesFormProps) {
     }))
   }
 
-  const isValid = prefs.name.trim() && prefs.genres.length > 0 && prefs.storyType && prefs.mood
+  const isValid =
+    prefs.genres.length > 0 &&
+    prefs.storyType &&
+    prefs.mood
 
   const selectedCount = [
-    !!prefs.name.trim(),
     prefs.genres.length > 0,
     !!prefs.movieActors,
     !!prefs.bookAuthors,
@@ -108,21 +108,8 @@ export function PreferencesForm({ onSubmit, onBack }: PreferencesFormProps) {
         </div>
 
         <div className="grid grid-cols-3 gap-8">
-          <div className="col-span-2 flex flex-col gap-6">
+          <div className="col-span-2 flex flex-col gap-8">
 
-            {/* Nombre */}
-            <section className="rounded-2xl p-8" style={cardStyle}>
-              <h2 className="font-serif text-xl font-bold text-[#F3E8D7] mb-1">Tu nombre</h2>
-              <p className="text-sm text-[#BBA892] mb-5">Así te saludaremos en tus recomendaciones.</p>
-              <input
-                type="text"
-                placeholder="Ej: María"
-                value={prefs.name}
-                onChange={(e) => setPrefs((p) => ({ ...p, name: e.target.value }))}
-                className="w-full px-5 py-3 text-sm placeholder:text-[#BBA892]/50 focus:outline-none focus:ring-1 focus:ring-[#C7A27C]/50 transition-all"
-                style={inputStyle}
-              />
-            </section>
 
             {/* Géneros */}
             <section className="rounded-2xl p-8" style={cardStyle}>
@@ -270,23 +257,19 @@ export function PreferencesForm({ onSubmit, onBack }: PreferencesFormProps) {
               <div className="mb-5">
                 <div className="flex justify-between text-xs text-[#BBA892] mb-2">
                   <span>Completado</span>
-                  <span>{selectedCount}/6 campos</span>
+                  <span>{selectedCount}/5 campos</span>
                 </div>
                 <div className="h-1.5 rounded-full overflow-hidden" style={{ background: "rgba(199,162,124,0.1)" }}>
                   <div
-                    className="h-full rounded-full transition-all duration-500"
-                    style={{ width: `${(selectedCount / 6) * 100}%`, background: "#C7A27C" }}
+                    className="h-full rounded-full bg-[var(--teal)] transition-all duration-500"
+                    style={{ width: `${(selectedCount / 5) * 100}%` }}
                   />
                 </div>
               </div>
 
               <div className="flex flex-col gap-3 text-sm">
-                {prefs.name.trim() && (
-                  <div>
-                    <span className="text-[10px] text-[#BBA892]/60 uppercase tracking-wider">Nombre</span>
-                    <p className="mt-0.5 font-medium text-[#F3E8D7]">{prefs.name}</p>
-                  </div>
-                )}
+
+
                 {prefs.genres.length > 0 && (
                   <div>
                     <span className="text-[10px] text-[#BBA892]/60 uppercase tracking-wider">Géneros</span>
@@ -328,17 +311,25 @@ export function PreferencesForm({ onSubmit, onBack }: PreferencesFormProps) {
                   Generar recomendaciones
                 </button>
                 <button
-                  onClick={() => setPrefs({ name: "", genres: [], movieActors: "", bookAuthors: "", storyType: "", mood: "", mediaType: "both" })}
-                  className="w-full py-3 rounded-full text-sm font-medium text-[#BBA892] transition-colors cursor-pointer hover:text-[#F3E8D7]"
-                  style={{ border: "1px solid rgba(199,162,124,0.15)" }}
+                  onClick={() =>
+                    setPrefs({
+                      genres: [],
+                      movieActors: "",
+                      bookAuthors: "",
+                      storyType: "",
+                      mood: "",
+                      mediaType: "both",
+                    })
+                  }
+                  className="w-full py-3 rounded-full text-sm font-medium text-[var(--muted-foreground)] border border-[var(--border)] hover:bg-[var(--beige)] transition-colors cursor-pointer"
                 >
                   Limpiar todo
                 </button>
               </div>
 
               {!isValid && (
-                <p className="mt-3 text-xs text-[#BBA892]/50 text-center leading-relaxed">
-                  Escribe tu nombre, selecciona al menos un género, tipo de historia y estado de ánimo.
+                <p className="mt-3 text-xs text-[var(--muted-foreground)] text-center leading-relaxed">
+                  Selecciona al menos un género, tipo de historia y estado de ánimo.
                 </p>
               )}
             </div>

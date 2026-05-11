@@ -210,20 +210,21 @@ function RecommendationCard({ rec, isFavorite, onToggleFavorite, onClick }: Card
       }}
     >
       {/* Poster */}
-      <div className="relative aspect-[2/3] overflow-hidden" style={{ background: "#17120E" }}>
+      <div className="relative aspect-[2/3] overflow-hidden bg-[var(--beige)]">
         {rec.imageUrl ? (
-          <img
-            src={rec.imageUrl}
+          <img 
+            src={rec.imageUrl} 
             alt={rec.title}
-            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 opacity-85"
+            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
           />
         ) : (
-          <div className="absolute inset-0 flex items-center justify-center" style={{ background: rec.color }}>
-            <span className="text-5xl drop-shadow-lg">{rec.emoji}</span>
+          <div
+            className="absolute inset-0 flex items-center justify-center"
+            style={{ background: rec.color }}
+          >
+            <span className="text-5xl">{rec.emoji}</span>
           </div>
         )}
-        <div className="absolute inset-0 bg-gradient-to-t from-[#0D0A07] via-transparent to-transparent opacity-80" />
-
         {/* Type badge */}
         <div className="absolute top-3 left-3">
           <span className="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider"

@@ -6,7 +6,7 @@ import { ArrowLeft, Mail, Lock, User, ArrowRight } from "lucide-react"
 type AuthMode = "login" | "register"
 
 interface AuthFormProps {
-  onSuccess: () => void
+  onSuccess: (username: string) => void
   onBack: () => void
   initialMode?: AuthMode
 }
@@ -14,6 +14,7 @@ interface AuthFormProps {
 export function AuthForm({ onSuccess, onBack, initialMode = "register" }: AuthFormProps) {
   const [mode, setMode] = useState<AuthMode>(initialMode)
   const [isLoading, setIsLoading] = useState(false)
+  const [username, setUsername] = useState("")
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -22,7 +23,7 @@ export function AuthForm({ onSuccess, onBack, initialMode = "register" }: AuthFo
     // Simulamos una carga para el diseño
     setTimeout(() => {
       setIsLoading(false)
-      onSuccess()
+      onSuccess(username)
     }, 1500)
   }
 
@@ -56,37 +57,39 @@ export function AuthForm({ onSuccess, onBack, initialMode = "register" }: AuthFo
             </div>
 
             <form onSubmit={handleSubmit} className="space-gap-6 flex flex-col gap-5">
+              <div className="space-y-2">
+                <label className="text-xs font-semibold uppercase tracking-wider text-[var(--muted-foreground)] ml-1">
+                  {mode === "register" ? "Nombre completo" : "Nombre de usuario"}
+                </label>
+                <div className="relative group">
+                  <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[var(--muted-foreground)] group-focus-within:text-[var(--teal)] transition-colors" />
+                  <input
+                    type="text"
+                    placeholder={mode === "register" ? "Tu nombre" : "tu_usuario"}
+                    required
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                    className="w-full pl-12 pr-4 py-4 rounded-2xl bg-[var(--beige)]/50 border border-[var(--border)] focus:border-[var(--teal)] focus:ring-2 focus:ring-[var(--teal)]/20 outline-none transition-all placeholder:text-[var(--muted-foreground)]/50"
+                  />
+                </div>
+              </div>
+
               {mode === "register" && (
                 <div className="space-y-2">
                   <label className="text-xs font-semibold uppercase tracking-wider text-[var(--muted-foreground)] ml-1">
-                    Nombre completo
+                    Correo electrónico
                   </label>
                   <div className="relative group">
-                    <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[var(--muted-foreground)] group-focus-within:text-[var(--teal)] transition-colors" />
+                    <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[var(--muted-foreground)] group-focus-within:text-[var(--teal)] transition-colors" />
                     <input
-                      type="text"
-                      placeholder="Tu nombre"
+                      type="email"
+                      placeholder="ejemplo@correo.com"
                       required
                       className="w-full pl-12 pr-4 py-4 rounded-2xl bg-[var(--beige)]/50 border border-[var(--border)] focus:border-[var(--teal)] focus:ring-2 focus:ring-[var(--teal)]/20 outline-none transition-all placeholder:text-[var(--muted-foreground)]/50"
                     />
                   </div>
                 </div>
               )}
-
-              <div className="space-y-2">
-                <label className="text-xs font-semibold uppercase tracking-wider text-[var(--muted-foreground)] ml-1">
-                  Correo electrónico
-                </label>
-                <div className="relative group">
-                  <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[var(--muted-foreground)] group-focus-within:text-[var(--teal)] transition-colors" />
-                  <input
-                    type="email"
-                    placeholder="ejemplo@correo.com"
-                    required
-                    className="w-full pl-12 pr-4 py-4 rounded-2xl bg-[var(--beige)]/50 border border-[var(--border)] focus:border-[var(--teal)] focus:ring-2 focus:ring-[var(--teal)]/20 outline-none transition-all placeholder:text-[var(--muted-foreground)]/50"
-                  />
-                </div>
-              </div>
 
               <div className="space-y-2">
                 <label className="text-xs font-semibold uppercase tracking-wider text-[var(--muted-foreground)] ml-1">

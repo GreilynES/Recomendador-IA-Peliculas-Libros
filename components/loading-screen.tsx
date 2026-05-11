@@ -24,12 +24,13 @@ export function LoadingScreen() {
   useEffect(() => {
     const progressInterval = setInterval(() => {
       setProgress((p) => {
-        if (p >= 95) return p
+        if (p >= 95) return p; // Wait at 95% until parent switches
         return p + 2
       })
     }, 100)
     return () => clearInterval(progressInterval)
   }, [])
+
 
   return (
     <main className="min-h-screen bg-[#0D0A07] flex flex-col items-center justify-center relative overflow-hidden">

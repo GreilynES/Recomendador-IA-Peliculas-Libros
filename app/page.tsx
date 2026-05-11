@@ -21,12 +21,12 @@ export default function Home() {
   const [preferences, setPreferences] = useState<Preferences | null>(null)
   const [selectedRec, setSelectedRec] = useState<Recommendation | null>(null)
   const [recommendations, setRecommendations] = useState<Recommendation[]>([])
+  const [userName, setUserName] = useState<string>("")
 
   const handleStart = () => setScreen("register")
 
   const handleExample = () => {
     setPreferences({
-      name: "Usuario ejemplo",
       genres: ["Drama", "Ciencia Ficción", "Fantasía"],
       movieActors: "Cate Blanchett",
       bookAuthors: "García Márquez",
@@ -45,7 +45,7 @@ export default function Home() {
         .from("usuarios")
         .insert([
           {
-            nombre: prefs.name || "Usuario Anónimo",
+            nombre: userName || "Usuario Anónimo",
           },
         ])
         .select()
@@ -189,7 +189,10 @@ export default function Home() {
       {screen === "register" && (
         <AuthForm
           initialMode="register"
-          onSuccess={() => setScreen("preferences")}
+          onSuccess={(name) => {
+            setUserName(name)
+            setScreen("preferences")
+          }}
           onBack={() => setScreen("landing")}
         />
       )}
@@ -197,7 +200,10 @@ export default function Home() {
       {screen === "login" && (
         <AuthForm
           initialMode="login"
-          onSuccess={() => setScreen("preferences")}
+          onSuccess={(name) => {
+            setUserName(name)
+            setScreen("preferences")
+          }}
           onBack={() => setScreen("landing")}
         />
       )}

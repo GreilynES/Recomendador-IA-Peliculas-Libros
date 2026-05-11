@@ -5,7 +5,7 @@ import Link from "next/link"
 
 type NavbarProps = {
   variant?: "transparent" | "solid"
-  onStartClick?: () => void
+  onStartClick?: () => void 
   onLoginClick?: () => void
 }
 
@@ -82,29 +82,25 @@ export function Navbar({ variant = "solid", onStartClick, onLoginClick }: Navbar
 
       {/* Mobile menu */}
       {menuOpen && (
-        <div className="md:hidden px-8 py-6 flex flex-col gap-4"
-          style={{ background: "rgba(13,10,7,0.95)", borderTop: "1px solid rgba(199,162,124,0.1)" }}>
-          {["Cómo funciona", "Géneros", "Favoritos"].map((item) => (
-            <Link
-              key={item}
-              href={`#${item.toLowerCase()}`}
-              className="text-sm font-medium text-[#BBA892]"
-              onClick={() => setMenuOpen(false)}
-            >
-              {item}
-            </Link>
-          ))}
+        <div className="md:hidden bg-[var(--cream)] border-t border-[var(--border)] px-8 py-6 flex flex-col gap-4">
+          <Link href="#como-funciona" className="text-sm text-[var(--foreground)]" onClick={() => setMenuOpen(false)}>
+            Cómo funciona
+          </Link>
+          <Link href="#generos" className="text-sm text-[var(--foreground)]" onClick={() => setMenuOpen(false)}>
+            Géneros
+          </Link>
+          <Link href="#favoritos" className="text-sm text-[var(--foreground)]" onClick={() => setMenuOpen(false)}>
+            Favoritos
+          </Link>
           <button
             onClick={() => { onLoginClick?.(); setMenuOpen(false) }}
-            className="mt-2 w-full px-5 py-2.5 rounded-full text-[#BBA892] text-sm font-medium"
-            style={{ border: "1px solid rgba(199,162,124,0.2)" }}
+            className="mt-2 w-full px-5 py-2.5 rounded-full text-[var(--muted-foreground)] text-sm font-medium border border-[var(--border)]"
           >
             Iniciar sesión
           </button>
           <button
             onClick={() => { onStartClick?.(); setMenuOpen(false) }}
-            className="w-full px-5 py-2.5 rounded-full text-sm font-bold text-[#0D0A07]"
-            style={{ background: "#C7A27C" }}
+            className="w-full px-5 py-2.5 rounded-full bg-[var(--teal)] text-[var(--primary-foreground)] text-sm font-medium"
           >
             Comenzar
           </button>

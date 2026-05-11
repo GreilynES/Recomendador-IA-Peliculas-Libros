@@ -37,14 +37,19 @@ export function DetailPage({ recommendation: rec, onBack, onNewSearch }: DetailP
           {/* Left — Poster */}
           <div className="col-span-1">
             {rec.imageUrl ? (
-              <div className="w-full aspect-[2/3] rounded-2xl overflow-hidden"
-                style={{ boxShadow: "0 24px 80px rgba(0,0,0,0.7)" }}>
-                <img src={rec.imageUrl} alt={rec.title} className="w-full h-full object-cover" />
+              <div className="w-full aspect-[2/3] rounded-3xl overflow-hidden shadow-2xl">
+                <img 
+                  src={rec.imageUrl} 
+                  alt={rec.title}
+                  className="w-full h-full object-cover"
+                />
               </div>
             ) : (
-              <div className="w-full aspect-[2/3] rounded-2xl overflow-hidden flex items-center justify-center"
-                style={{ background: rec.color, boxShadow: "0 24px 80px rgba(0,0,0,0.7)" }}>
-                <span className="text-9xl drop-shadow-xl">{rec.emoji}</span>
+              <div
+                className="w-full aspect-[2/3] rounded-3xl overflow-hidden shadow-2xl flex items-center justify-center"
+                style={{ background: rec.color }}
+              >
+                <span className="text-9xl">{rec.emoji}</span>
               </div>
             )}
 
@@ -97,10 +102,9 @@ export function DetailPage({ recommendation: rec, onBack, onNewSearch }: DetailP
             {/* Stats */}
             <div className="grid grid-cols-3 gap-4">
               {rec.stats?.map((stat) => (
-                <div key={stat.label} className="rounded-2xl p-5"
-                  style={{ background: "rgba(23,18,14,0.8)", border: "1px solid rgba(199,162,124,0.1)" }}>
-                  <p className="text-[10px] text-[#BBA892] uppercase tracking-wider font-bold mb-2">{stat.label}</p>
-                  <p className="font-serif text-2xl font-bold text-[#C7A27C]">{stat.value}</p>
+                <div key={stat.label} className="bg-[var(--card)] rounded-2xl p-5 border border-[var(--border)] shadow-sm">
+                  <p className="text-xs text-[var(--muted-foreground)] uppercase tracking-wider mb-1">{stat.label}</p>
+                  <p className="font-serif text-xl font-bold text-[var(--foreground)]">{stat.value}</p>
                 </div>
               ))}
             </div>
@@ -134,8 +138,7 @@ export function DetailPage({ recommendation: rec, onBack, onNewSearch }: DetailP
               <p className="text-[10px] uppercase tracking-widest text-[#BBA892]/60 font-bold mb-3">Etiquetas</p>
               <div className="flex flex-wrap gap-2">
                 {rec.tags?.map((tag) => (
-                  <span key={tag} className="px-4 py-1.5 rounded-full text-[#BBA892] text-sm font-medium"
-                    style={{ background: "rgba(23,18,14,0.8)", border: "1px solid rgba(199,162,124,0.15)" }}>
+                  <span key={tag} className="px-3 py-1.5 rounded-full bg-[var(--beige)] text-[var(--foreground)] text-sm">
                     {tag}
                   </span>
                 ))}
