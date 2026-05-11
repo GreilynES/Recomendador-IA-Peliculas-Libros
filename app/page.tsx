@@ -1,6 +1,7 @@
 "use client"
 
-import { useState, useCallback } from "react"
+import { useState, useEffect, useMemo } from "react"
+import { useRouter, useSearchParams } from "next/navigation"
 import { Navbar } from "@/components/navbar"
 import { LandingPage } from "@/components/landing-page"
 import { PreferencesForm, type Preferences } from "@/components/preferences-form"
@@ -8,22 +9,49 @@ import { LoadingScreen } from "@/components/loading-screen"
 import { ResultsPage } from "@/components/results-page"
 import { DetailPage } from "@/components/detail-page"
 
-import { RECOMMENDATIONS, type Recommendation } from "@/lib/data"
-import { supabase } from "@/lib/supabase"
-import { getDetailedRecommendations } from "@/lib/recommendations"
-import { AuthForm } from "@/components/ui/auth-form"
+import { type Recommendation } from "@/lib/data"
+import { createClient } from "@/lib/supabase"
 
-
-type Screen = "landing" | "preferences" | "loading" | "results" | "detail" | "login" | "register"
+type Screen = "landing" | "preferences" | "loading" | "results" | "detail"
 
 export default function Home() {
   const [screen, setScreen] = useState<Screen>("landing")
   const [preferences, setPreferences] = useState<Preferences | null>(null)
   const [selectedRec, setSelectedRec] = useState<Recommendation | null>(null)
   const [recommendations, setRecommendations] = useState<Recommendation[]>([])
-  const [userName, setUserName] = useState<string>("")
+  const [user, setUser] = useState<any>(null)
 
-  const handleStart = () => setScreen("register")
+  const router = useRouter()
+  const supabase = useMemo(() => createClient(), [])
+  const searchParams = useSearchParams()
+
+  useEffect(() => {
+    const getUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser()
+      setUser(user)
+    }
+
+    getUser()
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null)
+    })
+
+    return () => {
+      subscription.unsubscribe()
+    }
+  }, [supabase])
+
+  useEffect(() => {
+    if (searchParams.get("screen") === "preferences") {
+      setScreen("preferences")
+      router.replace("/")
+    }
+  }, [searchParams, router])
+
+  const handleStart = () => {
+    setScreen("preferences")
+  }
 
   const handleExample = () => {
     setPreferences({
@@ -38,24 +66,43 @@ export default function Home() {
   }
 
   const handlePreferencesSubmit = async (prefs: Preferences) => {
-    setScreen("loading") // Move this here to show loading immediately
+    setScreen("loading")
 
     try {
-      const { data: usuario, error: userError } = await supabase
-        .from("usuarios")
-        .insert([
-          {
-            nombre: userName || "Usuario Anónimo",
-          },
-        ])
-        .select()
-        .single()
+      let userId = null
 
-      if (userError) {
-        console.error("Error creando usuario:", userError)
+      if (user) {
+        const { data: usuarioRecord, error: userError } = await supabase
+          .from("usuarios")
+          .select("id")
+          .eq("auth_id", user.id)
+          .limit(1)
+          .maybeSingle()
+
+        if (userError) {
+          console.error("Error buscando usuario:", userError)
+        }
+
+        if (usuarioRecord) {
+          userId = usuarioRecord.id
+        } else {
+          const { data: newUser, error: createError } = await supabase
+            .from("usuarios")
+            .insert([{
+              auth_id: user.id,
+              nombre: user.user_metadata?.full_name || "Usuario",
+              email: user.email
+            }])
+            .select()
+            .single()
+
+          if (createError) {
+            console.error("Error creando usuario:", createError)
+          }
+
+          if (newUser) userId = newUser.id
+        }
       }
-
-      const userId = usuario?.id
 
       const actores = prefs.movieActors
         ? prefs.movieActors.split(",").map((a) => a.trim()).filter(Boolean)
@@ -74,26 +121,24 @@ export default function Home() {
               generos: prefs.genres,
               actores,
               autores,
-              // 'temas' removed to match existing schema
             },
           ])
+
         if (prefsError) console.error("Error guardando preferencias:", prefsError)
       }
 
-      // Fetch real recommendations from our API route
       const apiResponse = await fetch("/api/recommend", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(prefs),
-      });
+      })
 
       if (!apiResponse.ok) {
-        throw new Error("Error en la petición a la API");
+        throw new Error("Error en la petición a la API")
       }
 
-      const { recommendations: generatedRecommendations } = await apiResponse.json();
+      const { recommendations: generatedRecommendations } = await apiResponse.json()
       setRecommendations(generatedRecommendations)
-
 
       if (userId) {
         const tipoRecomendacion =
@@ -112,7 +157,7 @@ export default function Home() {
               usuario_id: userId,
               tipo_recomendacion: tipoRecomendacion,
               consulta: consultaTexto,
-              resultado: generatedRecommendations, // Guardamos el JSON completo de recomendaciones
+              resultado: generatedRecommendations,
             },
           ])
 
@@ -121,20 +166,14 @@ export default function Home() {
         }
       }
 
-
       setPreferences(prefs)
-      setScreen("results") // Directly go to results after loading data
+      setScreen("results")
     } catch (error) {
       console.error("Error in recommendation flow:", error)
-      alert("Hubo un error al generar las recomendaciones. Por favor verifica tus API keys.")
+      alert("Hubo un error al generar las recomendaciones.")
       setScreen("preferences")
     }
   }
-
-
-  const handleLoadingComplete = useCallback(() => {
-    setScreen("results")
-  }, [])
 
   const handleViewDetail = (rec: Recommendation) => {
     setSelectedRec(rec)
@@ -147,16 +186,15 @@ export default function Home() {
     setScreen("landing")
   }
 
-
-  const showNavbar = screen !== "loading" && screen !== "login" && screen !== "register"
+  const showNavbar = screen !== "loading"
 
   return (
     <>
       {showNavbar && (
         <Navbar
-          variant={screen === "landing" ? "solid" : "solid"}
+          variant="solid"
           onStartClick={handleStart}
-          onLoginClick={() => setScreen("login")}
+          onLoginClick={() => router.push("/login")}
         />
       )}
 
@@ -168,13 +206,13 @@ export default function Home() {
         <PreferencesForm
           onSubmit={handlePreferencesSubmit}
           onBack={() => setScreen("landing")}
+          isLoggedIn={!!user}
         />
       )}
 
       {screen === "loading" && (
         <LoadingScreen />
       )}
-
 
       {screen === "results" && preferences && (
         <ResultsPage
@@ -183,28 +221,6 @@ export default function Home() {
           onViewDetail={handleViewDetail}
           onEditPreferences={() => setScreen("preferences")}
           onNewSearch={handleNewSearch}
-        />
-      )}
-
-      {screen === "register" && (
-        <AuthForm
-          initialMode="register"
-          onSuccess={(name) => {
-            setUserName(name)
-            setScreen("preferences")
-          }}
-          onBack={() => setScreen("landing")}
-        />
-      )}
-
-      {screen === "login" && (
-        <AuthForm
-          initialMode="login"
-          onSuccess={(name) => {
-            setUserName(name)
-            setScreen("preferences")
-          }}
-          onBack={() => setScreen("landing")}
         />
       )}
 
