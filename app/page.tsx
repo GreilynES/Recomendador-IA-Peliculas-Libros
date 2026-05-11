@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useCallback, useEffect } from "react"
+import { useState, useEffect, useMemo } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { Navbar } from "@/components/navbar"
 import { LandingPage } from "@/components/landing-page"
@@ -20,37 +20,31 @@ export default function Home() {
   const [selectedRec, setSelectedRec] = useState<Recommendation | null>(null)
   const [recommendations, setRecommendations] = useState<Recommendation[]>([])
   const [user, setUser] = useState<any>(null)
-  
-  const router = useRouter()
-  const supabase = createClient()
 
+  const router = useRouter()
+  const supabase = useMemo(() => createClient(), [])
   const searchParams = useSearchParams()
 
   useEffect(() => {
-    // 1. Obtener usuario inicial
     const getUser = async () => {
       const { data: { user } } = await supabase.auth.getUser()
       setUser(user)
     }
+
     getUser()
 
-    // 2. Escuchar cambios en la autenticación (Login/Logout)
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null)
-      // Refrescar para asegurar que las cookies de SSR estén sincronizadas si es necesario
-      router.refresh()
     })
 
     return () => {
       subscription.unsubscribe()
     }
-  }, [supabase, router])
+  }, [supabase])
 
   useEffect(() => {
-    // Detectar si venimos de login/register con el parámetro de pantalla
     if (searchParams.get("screen") === "preferences") {
       setScreen("preferences")
-      // Limpiar el parámetro de la URL sin recargar
       router.replace("/")
     }
   }, [searchParams, router])
@@ -78,7 +72,6 @@ export default function Home() {
       let userId = null
 
       if (user) {
-        // Buscar el ID en nuestra tabla "usuarios" usando el auth_id
         const { data: usuarioRecord, error: userError } = await supabase
           .from("usuarios")
           .select("id")
@@ -86,10 +79,13 @@ export default function Home() {
           .limit(1)
           .maybeSingle()
 
+        if (userError) {
+          console.error("Error buscando usuario:", userError)
+        }
+
         if (usuarioRecord) {
           userId = usuarioRecord.id
         } else {
-          // Si por alguna razón no existe en la tabla usuarios, lo creamos
           const { data: newUser, error: createError } = await supabase
             .from("usuarios")
             .insert([{
@@ -99,7 +95,11 @@ export default function Home() {
             }])
             .select()
             .single()
-          
+
+          if (createError) {
+            console.error("Error creando usuario:", createError)
+          }
+
           if (newUser) userId = newUser.id
         }
       }
@@ -123,21 +123,21 @@ export default function Home() {
               autores,
             },
           ])
+
         if (prefsError) console.error("Error guardando preferencias:", prefsError)
       }
 
-      // Fetch real recommendations from our API route
       const apiResponse = await fetch("/api/recommend", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(prefs),
-      });
+      })
 
       if (!apiResponse.ok) {
-        throw new Error("Error en la petición a la API");
+        throw new Error("Error en la petición a la API")
       }
 
-      const { recommendations: generatedRecommendations } = await apiResponse.json();
+      const { recommendations: generatedRecommendations } = await apiResponse.json()
       setRecommendations(generatedRecommendations)
 
       if (userId) {
