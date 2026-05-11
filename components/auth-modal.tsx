@@ -90,9 +90,18 @@ export function AuthModal({ isOpen, onClose, initialMode = "login" }: AuthModalP
       if (authError) throw authError
       
       if (authData.user) {
-        await supabase.from("usuarios").insert([
-          { auth_id: authData.user.id, nombre: values.name, email: values.email }
-        ])
+        // Verificar si ya existe en la tabla usuarios para evitar duplicados
+        const { data: existingUser } = await supabase
+          .from("usuarios")
+          .select("id")
+          .eq("auth_id", authData.user.id)
+          .maybeSingle()
+
+        if (!existingUser) {
+          await supabase.from("usuarios").insert([
+            { auth_id: authData.user.id, nombre: values.name, email: values.email }
+          ])
+        }
       }
       onClose()
     } catch (err: any) {

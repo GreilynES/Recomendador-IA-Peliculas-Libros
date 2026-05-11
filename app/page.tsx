@@ -27,12 +27,24 @@ export default function Home() {
   const searchParams = useSearchParams()
 
   useEffect(() => {
+    // 1. Obtener usuario inicial
     const getUser = async () => {
       const { data: { user } } = await supabase.auth.getUser()
       setUser(user)
     }
     getUser()
-  }, [])
+
+    // 2. Escuchar cambios en la autenticación (Login/Logout)
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null)
+      // Refrescar para asegurar que las cookies de SSR estén sincronizadas si es necesario
+      router.refresh()
+    })
+
+    return () => {
+      subscription.unsubscribe()
+    }
+  }, [supabase, router])
 
   useEffect(() => {
     // Detectar si venimos de login/register con el parámetro de pantalla
@@ -71,7 +83,8 @@ export default function Home() {
           .from("usuarios")
           .select("id")
           .eq("auth_id", user.id)
-          .single()
+          .limit(1)
+          .maybeSingle()
 
         if (usuarioRecord) {
           userId = usuarioRecord.id
