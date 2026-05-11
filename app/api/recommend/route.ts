@@ -148,7 +148,7 @@ Formato:
 
     console.log("Preparando modelo Gemini...")
     const model = genAI.getGenerativeModel({ 
-      model: "gemini-2.0-flash-lite",
+      model: "gemini-flash-latest",
       generationConfig: {
         responseMimeType: "application/json",
       }
