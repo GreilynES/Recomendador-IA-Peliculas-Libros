@@ -1,6 +1,17 @@
 "use client"
 
 import Image from "next/image"
+import Link from "next/link"
+import { 
+  Moon, 
+  Flame, 
+  CloudRain, 
+  Sparkles, 
+  Coffee, 
+  Mountain, 
+  Heart, 
+  Clapperboard 
+} from "lucide-react"
 
 type LandingPageProps = {
   onStart: () => void
@@ -8,296 +19,215 @@ type LandingPageProps = {
 }
 
 const MOODS = [
-  { label: "Comforting", icon: "☕" },
-  { label: "Dark & Mysterious", icon: "🕯" },
-  { label: "Make me cry", icon: "🌧" },
-  { label: "Feel good", icon: "✨" },
-  { label: "Slow burn", icon: "🌙" },
-  { label: "Adventurero", icon: "⛰️" },
-  { label: "Romantic", icon: "🌹" },
-  { label: "Mind bending", icon: "🌀" },
+  { label: "Reflexivo", icon: Moon },
+  { label: "Misterioso", icon: Flame },
+  { label: "Melancólico", icon: CloudRain },
+  { label: "Inspirador", icon: Sparkles },
+  { label: "Íntimo", icon: Coffee },
+  { label: "Aventurero", icon: Mountain },
+  { label: "Romántico", icon: Heart },
+  { label: "Cinematográfico", icon: Clapperboard },
 ]
-
-const grain = `url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='512' height='512' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E")`
 
 export function LandingPage({ onStart, onExample }: LandingPageProps) {
   return (
-    <main className="min-h-screen overflow-hidden">
+    <main className="min-h-screen bg-background grain-subtle">
 
-      {/* HERO */}
-      <section className="relative min-h-screen flex items-center overflow-hidden">
+      {/* HERO SECTION */}
+      <section className="relative min-h-screen flex items-center pt-32 overflow-hidden">
+        
+        {/* BACKGROUND IMAGE */}
+        <div className="absolute inset-0 z-0 bg-background">
+          <Image
+            src="/ImgLanding.png"
+            alt="Cinematic Background"
+            fill
+            className="object-cover object-left opacity-90"
+            priority
+          />
+          {/* PRONOUNCED ORGANIC WAVE DIVIDER */}
+          <div className="absolute bottom-0 left-0 w-full overflow-hidden leading-[0] translate-y-[1px]">
+            <svg 
+              className="relative block w-[calc(100%+1.3px)] h-[80px]" 
+              viewBox="0 0 1200 120" 
+              preserveAspectRatio="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path 
+                d="M0,0 C150,150 400,0 600,80 C800,160 1050,20 1200,100 V120 H0 Z" 
+                fill="var(--background)"
+                stroke="none"
+              ></path>
+            </svg>
+          </div>
+        </div>
 
-        <Image
-          src="/ImgLanding.png"
-          alt="Composición cinematográfica"
-          fill
-          className="object-cover object-center"
-          priority
-        />
-
-        <div className="absolute inset-0" style={{ background: "linear-gradient(to right, rgba(0,0,0,0.0) 0%, rgba(0,0,0,0.25) 35%, rgba(8,5,2,0.78) 65%, rgba(8,5,2,0.92) 100%)" }} />
-        <div className="absolute inset-0" style={{ background: "linear-gradient(to bottom, rgba(0,0,0,0.4) 0%, transparent 18%)" }} />
-        <div className="absolute inset-0 bg-[#4A2E1A]/8" />
-        <div className="absolute inset-0 pointer-events-none opacity-[0.03]"
-          style={{ backgroundImage: grain, backgroundSize: "256px 256px" }} />
-
-        <div className="relative z-10 w-full max-w-7xl mx-auto px-20 py-40">
-          <div className="flex justify-end">
-            <div className="flex flex-col gap-8 max-w-xl text-right pr-8">
-
-              <h1 className="font-serif text-5xl lg:text-7xl font-light leading-[1.05] text-[#F3E8D7] tracking-tight"
-                style={{ textShadow: "0 2px 40px rgba(0,0,0,0.5)" }}>
-                Historias que{" "}
-                <span className="text-[#C7A27C] italic font-extralight">se quedan</span>{" "}
-                contigo.
+        <div className="max-w-7xl mx-auto px-6 md:px-12 lg:px-20 w-full relative z-10 flex justify-end pb-48">
+          
+          <div className="flex flex-col gap-8 max-w-2xl text-right items-end">
+            <div className="flex flex-col gap-2">
+              <h1 className="font-serif text-6xl md:text-8xl font-light leading-[0.95] text-foreground tracking-tight animate-in fade-in slide-in-from-right-5 duration-1000">
+                Historias <br />
+                que <span className="italic font-extralight text-primary">resuenan</span>
               </h1>
-
-              <p className="text-[#BBA892] text-12px leading-relaxed"
-                style={{ textShadow: "0 1px 20px rgba(0,0,0,0.6)" }}>
-                Recomendaciones personalizadas basadas en tu ánimo, gusto y curiosidad. Lumina entiende cómo te sientes, no solo lo que has visto.
-              </p>
-
-              <div className="flex items-center gap-4 pt-1 justify-end">
-                <button onClick={onExample}
-                  className="flex items-center gap-2 px-7 py-4 rounded-full text-sm font-semibold text-[#BBA892] transition-all hover:text-[#F3E8D7] cursor-pointer"
-                  style={{ border: "1px solid rgba(199,162,124,0.35)", backdropFilter: "blur(8px)", background: "rgba(0,0,0,0.2)" }}>
-                  <span className="w-5 h-5 rounded-full border border-[#C7A27C]/50 flex items-center justify-center text-[10px]">▶</span>
-                  Cómo funciona
-                </button>
-                <button onClick={onStart}
-                  className="group flex items-center gap-2 px-8 py-4 rounded-full font-semibold text-sm text-[#0D0A07] transition-all duration-300 hover:-translate-y-1 cursor-pointer"
-                  style={{ background: "#C7A27C"}}>
-                  Comenzar ahora
-                </button>
-              </div>
             </div>
-          </div>
-        </div>
 
-        <div className="absolute bottom-0 left-0 right-0 leading-none">
-          <svg viewBox="0 0 1440 64" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full block">
-            <path d="M0 64L1440 64L1440 24C1200 64 960 4 720 24C480 44 240 4 0 24L0 64Z" fill="#F5F0E8"/>
-          </svg>
-        </div>
-      </section>
+            <p className="text-muted-foreground text-lg leading-relaxed max-w-lg animate-in fade-in slide-in-from-right-7 duration-1000 delay-200 font-light italic">
+              Un espacio minimalista para descubrir películas y libros curados por IA basándonos en tu sensibilidad, no solo en algoritmos genéricos.
+            </p>
 
-      {/* MOOD SELECTOR — CREAM */}
-      <section className="relative bg-[#F5F0E8] py-28" id="como-funciona">
-        <div className="absolute inset-0 pointer-events-none opacity-[0.02]"
-          style={{ backgroundImage: grain, backgroundSize: "256px 256px" }} />
-
-        <div className="max-w-7xl mx-auto px-20 relative z-10">
-          <div className="mb-10">
-            <p className="text-[#8B5E4A] text-[10px] uppercase tracking-[0.3em] font-semibold mb-3">Discover by mood</p>
-            <h2 className="font-serif text-5xl font-light text-[#1C1410] tracking-tight">¿Qué estás buscando?</h2>
-            <p className="text-[#6F5A4E] mt-3 max-w-xl">Elegí cómo te sentís hoy y Lumina hace el resto.</p>
-          </div>
-          <div className="flex flex-wrap gap-3">
-            {MOODS.map((mood) => (
-              <button key={mood.label}
-                className="flex items-center gap-2 px-5 py-3 rounded-full text-sm font-medium text-[#4A3728] transition-all duration-200 hover:-translate-y-0.5 cursor-pointer"
-                style={{ background: "#EDE5D8", border: "1px solid rgba(139,94,74,0.2)" }}
-                onMouseEnter={e => {
-                  (e.currentTarget as HTMLElement).style.background = "#8B5E4A"
-                  ;(e.currentTarget as HTMLElement).style.color = "#F5F0E8"
-                }}
-                onMouseLeave={e => {
-                  (e.currentTarget as HTMLElement).style.background = "#EDE5D8"
-                  ;(e.currentTarget as HTMLElement).style.color = "#4A3728"
-                }}>
-                <span>{mood.icon}</span>{mood.label}
+            <div className="flex flex-wrap items-center justify-end gap-4 pt-2 animate-in fade-in slide-in-from-right-10 duration-1000 delay-500">
+              <button 
+                onClick={onStart}
+                className="group relative px-10 py-5 rounded-full font-bold text-[10px] uppercase tracking-widest text-white transition-all duration-500 hover:scale-[1.05] hover:editorial-shadow cursor-pointer overflow-hidden border border-primary"
+                style={{ background: "var(--primary)" }}
+              >
+                <span className="relative z-10">Iniciar descubrimiento</span>
+                <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-500" />
               </button>
-            ))}
+              
+              <Link 
+                href="#actos"
+                className="flex items-center gap-3 px-10 py-5 rounded-full border border-border bg-card/30 backdrop-blur-sm text-[10px] font-bold uppercase tracking-[0.2em] text-foreground hover:text-primary hover:border-primary/50 transition-all duration-300 cursor-pointer group hover:scale-[1.05] hover:editorial-shadow"
+              >
+                <svg className="w-3 h-3 fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M8 5v14l11-7z" />
+                </svg>
+                Demostración
+              </Link>
+            </div>
           </div>
-        </div>
-
-        <div className="absolute bottom-0 left-0 right-0 leading-none">
-          <svg viewBox="0 0 1440 64" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full block">
-            <path d="M0 0L1440 0L1440 40C1200 0 960 64 720 40C480 16 240 64 0 40L0 0Z" fill="#13100C"/>
-          </svg>
         </div>
       </section>
 
-      {/* HOW IT WORKS — DARK */}
-      <section className="relative bg-[#13100C] py-28 overflow-hidden">
-        <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] bg-[#C7A27C]/4 rounded-full blur-[100px]" />
+      {/* MOOD EXPLORER */}
+      <section className="py-32 bg-background relative scroll-mt-24" id="descubrir">
+        <div className="max-w-7xl mx-auto px-6 md:px-12 lg:px-20 text-center mb-16">
+          <p className="text-primary text-[10px] uppercase tracking-[0.4em] font-bold mb-4">The Mood Explorer</p>
+          <h2 className="font-serif text-5xl font-light text-foreground tracking-tight">¿Qué atmósfera buscas hoy?</h2>
+          <p className="text-muted-foreground mt-4 max-w-xl mx-auto italic">Selecciona una emoción para comenzar tu descubrimiento curado.</p>
         </div>
-        <div className="max-w-7xl mx-auto px-20 relative z-10">
-          <div className="grid grid-cols-2 gap-20 items-center">
-            <div className="relative">
-              <div className="aspect-[4/3] rounded-2xl overflow-hidden relative"
-                style={{ boxShadow: "0 24px 80px rgba(0,0,0,0.6)" }}>
-                <Image src="/ImgLanding.png" alt="Biblioteca" fill className="object-cover opacity-60" />
-                <div className="absolute inset-0 bg-gradient-to-br from-[#C7A27C]/20 to-[#0D0A07]/60" />
+
+        <div className="max-w-5xl mx-auto px-6 grid grid-cols-2 md:grid-cols-4 gap-4">
+          {MOODS.map((mood, idx) => (
+            <button 
+              key={mood.label}
+              className="group flex flex-col items-center justify-center p-8 rounded-[2rem] bg-card border border-border transition-all duration-500 hover:scale-[1.05] hover:editorial-shadow hover:border-primary/30 cursor-pointer"
+            >
+              <span className="text-primary mb-4 group-hover:scale-110 transition-transform duration-500">
+                <mood.icon className="w-10 h-10" strokeWidth={1.5} />
+              </span>
+              <span className="text-sm font-semibold tracking-wide text-foreground">{mood.label}</span>
+            </button>
+          ))}
+        </div>
+      </section>
+
+      {/* HOW IT WORKS — EDITORIAL LAYOUT */}
+      <section className="py-40 scroll-mt-24" id="actos">
+        <div className="max-w-7xl mx-auto px-6 md:px-12 lg:px-20">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-24 items-center">
+            
+            <div className="relative group">
+              <div className="aspect-square bg-secondary rounded-[3rem] overflow-hidden editorial-shadow relative z-10 transition-transform duration-700 group-hover:-translate-y-2">
+                <Image src="/ImgLanding.png" alt="Library View" fill className="object-cover opacity-80" />
+                <div className="absolute inset-0 bg-primary/5" />
               </div>
-              <div className="absolute -bottom-6 -right-6 rounded-2xl p-5"
-                style={{ background: "rgba(23,18,14,0.95)", border: "1px solid rgba(199,162,124,0.2)", backdropFilter: "blur(20px)" }}>
-                <p className="text-[#C7A27C] font-serif text-3xl font-light italic">3</p>
-                <p className="text-[#BBA892] text-xs mt-1">pasos simples</p>
-              </div>
+              <div className="absolute -inset-4 bg-primary/10 rounded-[3rem] -z-10 rotate-3 group-hover:rotate-6 transition-transform duration-700" />
             </div>
-            <div className="flex flex-col gap-8">
-              <div>
-                <p className="text-[#C7A27C]/60 text-[10px] uppercase tracking-[0.3em] font-semibold mb-3">How it works</p>
-                <h2 className="font-serif text-5xl font-light text-[#F3E8D7] leading-tight tracking-tight">Tu próxima historia en 3 pasos</h2>
+
+            <div className="flex flex-col gap-12">
+              <div className="flex flex-col gap-4">
+                <p className="text-primary text-[10px] uppercase tracking-[0.3em] font-bold italic">The Experience</p>
+                <h2 className="font-serif text-6xl font-light text-foreground leading-tight tracking-tight">
+                  Descubrimiento en <br /> tres actos
+                </h2>
               </div>
-              {[
-                { icon: "😊", label: "Cuéntanos tu ánimo", desc: "Elegí cómo te sentís hoy o describí qué tipo de historia necesitás." },
-                { icon: "✨", label: "Encontramos el match", desc: "Nuestra IA analiza patrones emocionales y selecciona títulos que resuenan con vos." },
-                { icon: "📖", label: "Descubrí y disfrutá", desc: "Guardá, valorá y explorá las historias que se quedan con vos." },
-              ].map((step, i) => (
-                <div key={i} className="flex gap-5 items-start">
-                  <div className="w-12 h-12 rounded-xl flex items-center justify-center text-xl flex-shrink-0"
-                    style={{ background: "rgba(199,162,124,0.1)", border: "1px solid rgba(199,162,124,0.2)" }}>
-                    {step.icon}
+
+              <div className="flex flex-col gap-10">
+                {[
+                  { num: "01", label: "Define tu atmósfera", desc: "No buscamos por etiquetas, sino por sensaciones. Cuéntanos qué tipo de viaje emocional quieres emprender." },
+                  { num: "02", label: "Curación algorítmica", desc: "Nuestra IA analiza patrones narrativos y estéticos para encontrar obras que realmente conecten con tu sensibilidad." },
+                  { num: "03", label: "Inmersión literaria", desc: "Explora reseñas editoriales y detalles visuales de cada recomendación antes de decidir tu próxima historia." },
+                ].map((step, i) => (
+                  <div key={i} className="flex gap-8 group">
+                    <span className="font-serif text-3xl font-light italic text-primary/30 group-hover:text-primary transition-colors duration-500">{step.num}</span>
+                    <div className="flex flex-col gap-2">
+                      <h3 className="text-lg font-bold text-foreground tracking-wide">{step.label}</h3>
+                      <p className="text-muted-foreground text-sm leading-relaxed max-w-sm">{step.desc}</p>
+                    </div>
                   </div>
-                  <div>
-                    <h3 className="font-serif text-xl font-normal italic text-[#F3E8D7] mb-1">{step.label}</h3>
-                    <p className="text-[#BBA892] text-sm leading-relaxed">{step.desc}</p>
-                  </div>
-                </div>
-              ))}
-              <button onClick={onStart}
-                className="w-fit px-8 py-4 rounded-full font-semibold text-sm text-[#0D0A07] transition-all hover:-translate-y-0.5 cursor-pointer mt-2"
-                style={{ background: "#C7A27C" }}>
-                Comenzar ahora
+                ))}
+              </div>
+
+              <button 
+                onClick={onStart}
+                className="w-fit mt-4 px-10 py-5 rounded-full font-bold text-sm text-white bg-foreground hover:bg-primary transition-all duration-500 hover:editorial-shadow cursor-pointer"
+              >
+                Iniciar descubrimiento
               </button>
             </div>
           </div>
         </div>
-
-        <div className="absolute bottom-0 left-0 right-0 leading-none">
-          <svg viewBox="0 0 1440 64" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full block">
-            <path d="M0 64L1440 64L1440 24C1200 64 960 4 720 24C480 44 240 4 0 24L0 64Z" fill="#F5F0E8"/>
-          </svg>
-        </div>
       </section>
 
-      {/* TICKER */}
-      <section className="bg-[#F5F0E8] overflow-hidden" style={{ borderTop: "1px solid rgba(139,94,74,0.12)", borderBottom: "1px solid rgba(139,94,74,0.12)" }}>
-        <div className="flex whitespace-nowrap" style={{ animation: "ticker 24s linear infinite" }}>
+      {/* TICKER — EDITORIAL BRANDS */}
+      <section className="py-10 bg-secondary/30 border-y border-border overflow-hidden">
+        <div className="flex whitespace-nowrap animate-ticker">
           {Array.from({ length: 4 }).map((_, i) => (
-            <div key={i} className="flex items-center gap-8 px-8 py-4 flex-shrink-0">
-              {["The Night Circus", "✦", "Dune", "✦", "Before Sunrise", "✦", "A Little Life", "✦", "Past Lives", "✦", "Call Me By Your Name", "✦"].map((item, j) => (
-                <span key={j} className={`text-sm font-medium ${item === "✦" ? "text-[#C7A27C]" : "text-[#6F5A4E]"}`}>{item}</span>
+            <div key={i} className="flex items-center gap-20 px-10 flex-shrink-0">
+              {["Mubi Inspired", "✦", "Editorial Minimalism", "✦", "Cinematic Discovery", "✦", "Aesthetic Curation", "✦", "Modern Storytelling", "✦"].map((item, j) => (
+                <span key={j} className={`text-[10px] font-bold uppercase tracking-[0.3em] ${item === "✦" ? "text-primary/40" : "text-muted-foreground/60"}`}>{item}</span>
               ))}
             </div>
           ))}
         </div>
-        <style>{`@keyframes ticker { from { transform: translateX(0) } to { transform: translateX(-25%) } }`}</style>
+        <style>{`
+          @keyframes ticker { from { transform: translateX(0) } to { transform: translateX(-50%) } }
+          .animate-ticker { animation: ticker 40s linear infinite; }
+        `}</style>
       </section>
 
-      {/* VIBE PREVIEW — CREAM */}
-      <section className="relative bg-[#F5F0E8] py-28">
-        <div className="max-w-7xl mx-auto px-20">
-          <div className="grid grid-cols-2 gap-16 items-center">
-            <div className="flex flex-col gap-6">
-              <p className="text-[#8B5E4A] text-[10px] uppercase tracking-[0.3em] font-semibold">Tu vibe actual</p>
-              <h2 className="font-serif text-5xl font-light italic text-[#1C1410] leading-tight tracking-tight">Reflexivo · Íntimo · Nostálgico</h2>
-              <div className="flex flex-wrap gap-2">
-                {["Emotivo", "Hermosa escritura", "Personajes profundos", "Character driven"].map(tag => (
-                  <span key={tag} className="px-3 py-1.5 rounded-full text-xs text-[#4A3728] font-medium"
-                    style={{ background: "#EDE5D8", border: "1px solid rgba(139,94,74,0.2)" }}>{tag}</span>
-                ))}
-              </div>
-              <p className="text-[#6F5A4E] leading-relaxed max-w-sm">
-                Lumina analiza tu perfil emocional y encuentra libros y películas que resuenan exactamente con cómo te sentís hoy.
-              </p>
-              <button onClick={onStart}
-                className="w-fit px-8 py-4 rounded-full font-semibold text-sm text-[#F5F0E8] transition-all hover:-translate-y-0.5 cursor-pointer"
-                style={{ background: "#1C1410", boxShadow: "0 8px 30px rgba(0,0,0,0.2)" }}>
-                Comenzar mi viaje →
-              </button>
-            </div>
-            <div className="grid grid-cols-3 gap-3">
-              {[
-                { title: "A Little Life", sub: "Hanya Yanagihara", rating: "4.6", type: "Libro", bg: "#1E1813" },
-                { title: "Call Me By Your Name", sub: "André Aciman", rating: "4.4", type: "Libro", bg: "#17120E" },
-                { title: "Past Lives", sub: "2023 · Romance", rating: "4.3", type: "Película", bg: "#241C15" },
-              ].map((item, i) => (
-                <div key={i} className="rounded-2xl overflow-hidden flex flex-col"
-                  style={{ background: item.bg, minHeight: 220, border: "1px solid rgba(199,162,124,0.08)", boxShadow: "0 12px 40px rgba(0,0,0,0.25)" }}>
-                  <div className="flex-1 bg-gradient-to-br from-[#C7A27C]/8 to-transparent" />
-                  <div className="p-4">
-                    <span className="text-[#C7A27C] text-[10px] uppercase tracking-wider font-semibold">{item.type}</span>
-                    <p className="font-serif text-sm font-normal text-[#F3E8D7] mt-1 leading-snug">{item.title}</p>
-                    <p className="text-[#BBA892] text-[11px] mt-0.5">{item.sub}</p>
-                    <p className="text-[#C7A27C] text-xs mt-2">★ {item.rating}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
+      {/* FINAL CTA */}
+      <section className="py-40 bg-background relative overflow-hidden">
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-primary/5 rounded-full blur-[120px] -z-10" />
+        
+        <div className="max-w-4xl mx-auto px-6 text-center flex flex-col items-center gap-10">
+          <div className="flex flex-col gap-6">
+            <h2 className="font-serif text-6xl md:text-8xl font-light text-foreground tracking-tight leading-tight">
+              Encuentra tu próxima <br />
+              <span className="italic font-extralight text-primary">obsesión</span> literaria.
+            </h2>
+            <p className="text-muted-foreground text-lg max-w-xl mx-auto italic">
+              Lumina es el puente entre tu curiosidad y las historias que definirán tu próxima temporada.
+            </p>
           </div>
-        </div>
 
-        <div className="absolute bottom-0 left-0 right-0 leading-none">
-          <svg viewBox="0 0 1440 64" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full block">
-            <path d="M0 0L1440 0L1440 40C1200 0 960 64 720 40C480 16 240 64 0 40L0 0Z" fill="#0D0A07"/>
-          </svg>
-        </div>
-      </section>
-
-      {/* WHY LUMINA — DARK */}
-      <section className="relative bg-[#0D0A07] py-28 overflow-hidden">
-        <div className="absolute top-1/2 right-1/4 w-[600px] h-[400px] bg-[#C7A27C]/4 rounded-full blur-[120px] pointer-events-none" />
-        <div className="max-w-7xl mx-auto px-20 relative z-10">
-          <div className="text-center mb-16">
-            <p className="text-[#C7A27C]/60 text-[10px] uppercase tracking-[0.3em] font-semibold mb-3">Por qué vas a amarlo</p>
-            <h2 className="font-serif text-5xl font-light text-[#F3E8D7] tracking-tight">No es solo una app de recomendaciones</h2>
-          </div>
-          <div className="grid grid-cols-4 gap-4">
-            {[
-              { icon: "⭐", title: "Hecho para vos", desc: "Recomendaciones basadas en tu gusto único y estado de ánimo." },
-              { icon: "💛", title: "Más que ratings", desc: "Encontramos historias que conectan emocionalmente con quién sos." },
-              { icon: "👥", title: "Comunidad", desc: "Unite a miles de personas que aman las historias como vos." },
-              { icon: "✨", title: "Siempre nuevo", desc: "Picks frescos, gemas escondidas y clásicos atemporales." },
-            ].map((item) => (
-              <div key={item.title} className="rounded-2xl p-6 flex flex-col gap-4"
-                style={{ background: "rgba(23,18,14,0.7)", border: "1px solid rgba(199,162,124,0.08)" }}>
-                <span className="text-2xl">{item.icon}</span>
-                <h3 className="font-serif text-lg font-normal italic text-[#F3E8D7]">{item.title}</h3>
-                <p className="text-[#BBA892] text-sm leading-relaxed">{item.desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <div className="absolute bottom-0 left-0 right-0 leading-none">
-          <svg viewBox="0 0 1440 64" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full block">
-            <path d="M0 64L1440 64L1440 24C1200 64 960 4 720 24C480 44 240 4 0 24L0 64Z" fill="#F5F0E8"/>
-          </svg>
-        </div>
-      </section>
-
-      {/* FINAL CTA — CREAM */}
-      <section className="relative bg-[#F5F0E8] py-32">
-        <div className="max-w-5xl mx-auto px-20 text-center">
-          <p className="text-[#8B5E4A] text-[10px] uppercase tracking-[0.3em] font-semibold mb-5">Tu próxima obsesión</p>
-          <h2 className="font-serif text-6xl font-light text-[#1C1410] max-w-3xl mx-auto leading-tight tracking-tight">
-            ¿Listo para encontrar tu próxima historia{" "}
-            <span className="text-[#8B5E4A] italic font-extralight">inolvidable?</span>
-          </h2>
-          <p className="text-[#6F5A4E] mt-6 max-w-xl mx-auto leading-relaxed">
-            Lumina no es una recomendadora genérica. Es tu curadora cinematográfica personal que entiende tu alma.
-          </p>
-          <button onClick={onStart}
-            className="mt-10 px-10 py-4 rounded-full font-semibold text-base text-[#F5F0E8] transition-all duration-300 hover:-translate-y-1 cursor-pointer"
-            style={{ background: "#1C1410", boxShadow: "0 12px 40px rgba(0,0,0,0.2)" }}>
-            Comenzar mi viaje →
+          <button 
+            onClick={onStart}
+            className="px-12 py-6 rounded-full font-bold text-sm text-white bg-foreground hover:bg-primary transition-all duration-500 hover:editorial-shadow cursor-pointer"
+          >
+            Iniciar descubrimiento curado
           </button>
         </div>
       </section>
 
-      {/* FOOTER — DARK */}
-      <footer className="bg-[#0D0A07] py-14" style={{ borderTop: "1px solid rgba(199,162,124,0.08)" }}>
-        <div className="max-w-7xl mx-auto px-20 flex items-center justify-between">
+      {/* FOOTER */}
+      <footer className="py-20 border-t border-border">
+        <div className="max-w-7xl mx-auto px-6 md:px-12 lg:px-20 flex flex-col md:flex-row items-center justify-between gap-10">
           <div className="flex items-center gap-2">
-            <span className="font-serif text-2xl font-light italic text-[#C7A27C] tracking-wide">Lumina</span>
-            <span className="w-1.5 h-1.5 rounded-full bg-[#C7A27C]/60" />
+            <span className="font-serif text-3xl font-light italic text-foreground">Lumina</span>
+            <span className="w-1.5 h-1.5 rounded-full bg-primary/40" />
           </div>
-          <p className="text-sm text-[#BBA892]/40">
-            © 2026 Lumina. Recomendaciones cinematográficas premium impulsadas por IA.
+          
+          <nav className="flex gap-10 text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+            <Link href="#" className="hover:text-primary transition-colors">Instagram</Link>
+            <Link href="#" className="hover:text-primary transition-colors">Journal</Link>
+            <Link href="#" className="hover:text-primary transition-colors">Privacy</Link>
+          </nav>
+
+          <p className="text-[10px] font-medium text-muted-foreground/50 tracking-widest uppercase">
+            © 2026 Lumina Studio. Curated Experience.
           </p>
         </div>
       </footer>

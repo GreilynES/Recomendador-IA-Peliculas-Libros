@@ -1,15 +1,15 @@
-const { GoogleGenerativeAI } = require("@google/generative-ai");
-require("dotenv").config();
-
-async function listModels() {
-  const genAI = new GoogleGenerativeAI(process.env.GOOGLE_GEMINI_API_KEY);
+async function test() {
+  const apiKey = "AIzaSyAZq1Qqn6hGUZTjrVA2Tnqmxn90AEEpd2A";
+  const url = `https://generativelanguage.googleapis.com/v1/models?key=${apiKey}`;
+  
   try {
-    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${process.env.GOOGLE_GEMINI_API_KEY}`);
+    const response = await fetch(url);
+    console.log("Status:", response.status);
     const data = await response.json();
-    console.log(JSON.stringify(data, null, 2));
-  } catch (error) {
-    console.error(error);
+    console.log("Models:", JSON.stringify(data, null, 2));
+  } catch (e) {
+    console.error("Fetch failure:", e.message);
   }
 }
 
-listModels();
+test();

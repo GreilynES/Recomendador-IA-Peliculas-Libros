@@ -1,28 +1,28 @@
 import type { Metadata } from 'next'
-import { Playfair_Display, Raleway } from 'next/font/google'
+import { Cormorant_Garamond, Inter } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
 import './globals.css'
 
-// Serif display con carácter — títulos, logo
-const playfair = Playfair_Display({
+// Serif editorial elegante para títulos
+const cormorant = Cormorant_Garamond({
   subsets: ["latin"],
-  variable: "--font-playfair",
-  weight: ["400", "500", "600", "700", "800", "900"],
+  variable: "--font-serif",
+  weight: ["300", "400", "500", "600", "700"],
   style: ["normal", "italic"],
   display: "swap",
 })
 
-// Sans limpio — nav, body, UI
-const raleway = Raleway({
+// Sans minimalista moderna para UI
+const inter = Inter({
   subsets: ["latin"],
-  variable: "--font-raleway",
+  variable: "--font-sans",
   weight: ["300", "400", "500", "600", "700"],
   display: "swap",
 })
 
 export const metadata: Metadata = {
-  title: 'Lumina — Recomendaciones de Películas y Libros',
-  description: 'Descubre películas y libros personalizados para ti. Lumina usa inteligencia artificial para recomendarte títulos basados en tus gustos, estado de ánimo y preferencias.',
+  title: 'Lumina',
+  description: 'Un espacio minimalista para descubrir películas y libros que resuenan contigo. Lumina usa inteligencia artificial para curar recomendaciones basadas en tu sensibilidad.',
   icons: {
     icon: [
       { url: '/icon-light-32x32.png', media: '(prefers-color-scheme: light)' },
@@ -39,8 +39,8 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="es">
-      <body className={`${playfair.variable} ${raleway.variable} font-sans antialiased`}>
+    <html lang="es" className="scroll-smooth">
+      <body className={`${cormorant.variable} ${inter.variable} font-sans antialiased selection:bg-accent/30`}>
         {children}
         <Analytics />
       </body>

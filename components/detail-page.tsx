@@ -1,8 +1,9 @@
 "use client"
 
-import { useState } from "react"
 import { cn } from "@/lib/utils"
 import type { Recommendation } from "@/lib/data"
+import { ArrowLeft, Sparkles, Star, Calendar, Globe, Bookmark, Share2, PlayCircle, BookOpen } from "lucide-react"
+import { DynamicIcon } from "./ui/dynamic-icon"
 
 type DetailPageProps = {
   recommendation: Recommendation
@@ -10,156 +11,192 @@ type DetailPageProps = {
   onNewSearch: () => void
 }
 
-export function DetailPage({ recommendation: rec, onBack, onNewSearch }: DetailPageProps) {
-  const [isFavorite, setIsFavorite] = useState(false)
+export function DetailPage({ recommendation, onBack, onNewSearch }: DetailPageProps) {
+  const rating = recommendation.stats.find(s => 
+    s.label.toLowerCase().includes("calificación")
+  )?.value || "N/A"
 
   return (
-    <main className="min-h-screen bg-[#0D0A07] pt-24 pb-20 relative overflow-hidden">
-      {/* Ambient */}
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute -top-20 right-1/3 w-[600px] h-[600px] bg-[#C7A27C]/4 rounded-full blur-[120px]" />
-        <div className="absolute top-1/2 -left-20 w-[400px] h-[400px] bg-[#8B5E4A]/5 rounded-full blur-[100px]" />
-      </div>
+    <main className="min-h-screen bg-background grain-subtle animate-in fade-in duration-1000">
+            {/* HERO SECTION — CINEMATIC */}
+      <section className="relative min-h-[500px] md:h-[65vh] w-full flex flex-col justify-center overflow-hidden">
+        {/* Background Layer */}
+        <div className="absolute inset-0 z-0">
+          {recommendation.imageUrl ? (
+            <img 
+              src={recommendation.imageUrl} 
+              alt={recommendation.title}
+              className="w-full h-full object-cover"
+            />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center" style={{ background: recommendation.color }}>
+              <DynamicIcon 
+                name={recommendation.emoji} 
+                className="w-32 md:w-48 h-32 md:h-48 text-white/40" 
+                strokeWidth={1}
+              />
+            </div>
+          )}
+          
+          {/* Gradient Overlays */}
+          <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent" />
+          <div className="absolute inset-0 bg-black/20" />
+        </div>
 
-      <div className="max-w-7xl mx-auto px-8 relative z-10">
-        {/* Back */}
-        <button
-          onClick={onBack}
-          className="flex items-center gap-2 text-sm text-[#BBA892] hover:text-[#F3E8D7] transition-colors mb-10 cursor-pointer font-medium"
-        >
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 19l-7-7 7-7" />
+        {/* PRONOUNCED ORGANIC WAVE DIVIDER */}
+        <div className="absolute bottom-0 left-0 w-full overflow-hidden leading-[0] translate-y-[1px] z-10">
+          <svg 
+            className="relative block w-[calc(100%+1.3px)] h-[40px] md:h-[60px]" 
+            viewBox="0 0 1200 120" 
+            preserveAspectRatio="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path 
+              d="M0,0 C150,150 400,0 600,80 C800,160 1050,20 1200,100 V120 H0 Z" 
+              fill="var(--background)"
+              stroke="none"
+            ></path>
           </svg>
-          Volver a resultados
-        </button>
+        </div>
 
-        <div className="grid grid-cols-3 gap-12">
-          {/* Left — Poster */}
-          <div className="col-span-1">
-            {rec.imageUrl ? (
-              <div className="w-full aspect-[2/3] rounded-3xl overflow-hidden shadow-2xl">
-                <img 
-                  src={rec.imageUrl} 
-                  alt={rec.title}
-                  className="w-full h-full object-cover"
-                />
-              </div>
-            ) : (
-              <div
-                className="w-full aspect-[2/3] rounded-3xl overflow-hidden shadow-2xl flex items-center justify-center"
-                style={{ background: rec.color }}
-              >
-                <span className="text-9xl">{rec.emoji}</span>
-              </div>
-            )}
-
-            {/* Actions */}
-            <div className="mt-5 flex flex-col gap-3">
-              <button
-                onClick={() => setIsFavorite((v) => !v)}
-                className="w-full py-3 rounded-full text-sm font-bold flex items-center justify-center gap-2 transition-all duration-200 cursor-pointer"
-                style={
-                  isFavorite
-                    ? { background: "#C7A27C", color: "#0D0A07", boxShadow: "0 6px 24px rgba(199,162,124,0.3)" }
-                    : { background: "rgba(23,18,14,0.8)", color: "#BBA892", border: "1px solid rgba(199,162,124,0.2)" }
-                }
-              >
-                <svg className="w-4 h-4" fill={isFavorite ? "currentColor" : "none"} stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                </svg>
-                {isFavorite ? "Guardado" : "Guardar"}
-              </button>
-              <button className="w-full py-3 rounded-full text-sm font-bold flex items-center justify-center gap-2 transition-all cursor-pointer text-[#F3E8D7] hover:-translate-y-0.5"
-                style={{ background: "linear-gradient(135deg, #C7A27C, #8B5E4A)", boxShadow: "0 6px 24px rgba(199,162,124,0.25)" }}>
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                </svg>
-                Ver más
-              </button>
-            </div>
+        {/* Navigation Overlays */}
+        <div className="absolute top-28 left-0 right-0 z-30">
+          <div className="max-w-7xl mx-auto px-6 md:px-12 lg:px-20">
+            <button
+              onClick={onBack}
+              className="group flex items-center gap-3 text-[10px] font-bold uppercase tracking-[0.3em] text-white/90 hover:text-white transition-all cursor-pointer w-fit"
+            >
+              <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
+              Volver a la galería
+            </button>
           </div>
+        </div>
 
-          {/* Right — Content */}
-          <div className="col-span-2 flex flex-col gap-7">
-            {/* Header */}
-            <div>
-              <div className="flex items-center gap-3 mb-4">
-                <span className="px-4 py-1.5 rounded-full text-xs font-bold"
-                  style={{
-                    background: rec.type === "movie" ? "rgba(176,137,104,0.9)" : "rgba(139,94,74,0.9)",
-                    color: "#F3E8D7",
-                  }}>
-                  {rec.type === "movie" ? "Película" : "Libro"}
-                </span>
-                <span className="text-sm font-semibold text-[#C7A27C]">{rec.genre}</span>
+        {/* Content Layer (Flex Flow) */}
+        <div className="relative z-20 w-full max-w-7xl mx-auto px-6 md:px-12 lg:px-20 pt-20 pb-20 flex flex-col items-center gap-8 md:gap-12 text-center">
+          {/* Identity & Title */}
+          <div className="flex flex-col items-center gap-6 max-w-4xl">
+            <h1 className="font-serif text-4xl md:text-7xl font-light text-white tracking-tight leading-[1.1]">
+              {recommendation.title}
+            </h1>
+            
+            <div className="flex flex-wrap items-center justify-center gap-8 text-white/70 text-[10px] font-bold uppercase tracking-[0.3em]">
+              <div className="flex items-center gap-2">
+                <Calendar className="w-3.5 h-3.5" />
+                <span>{recommendation.meta.split("·")[0]}</span>
               </div>
-              <h1 className="font-serif text-6xl font-bold text-[#F3E8D7] leading-tight">
-                {rec.title}
-              </h1>
-              <p className="mt-2 text-[#BBA892] text-lg font-medium">{rec.meta}</p>
-            </div>
-
-            {/* Stats */}
-            <div className="grid grid-cols-3 gap-4">
-              {rec.stats?.map((stat) => (
-                <div key={stat.label} className="bg-[var(--card)] rounded-2xl p-5 border border-[var(--border)] shadow-sm">
-                  <p className="text-xs text-[var(--muted-foreground)] uppercase tracking-wider mb-1">{stat.label}</p>
-                  <p className="font-serif text-xl font-bold text-[var(--foreground)]">{stat.value}</p>
-                </div>
-              ))}
-            </div>
-
-            {/* Synopsis */}
-            <div className="rounded-2xl p-8"
-              style={{ background: "rgba(23,18,14,0.8)", border: "1px solid rgba(199,162,124,0.1)" }}>
-              <h2 className="font-serif text-xl font-bold text-[#F3E8D7] mb-4">Sinopsis</h2>
-              <p className="text-[#BBA892] leading-relaxed">{rec.synopsis}</p>
-            </div>
-
-            {/* Why recommended */}
-            <div className="rounded-2xl p-8"
-              style={{ background: "rgba(199,162,124,0.06)", border: "1px solid rgba(199,162,124,0.2)" }}>
-              <div className="flex items-start gap-4">
-                <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5"
-                  style={{ background: "linear-gradient(135deg, #C7A27C, #8B5E4A)" }}>
-                  <svg className="w-5 h-5 text-[#0D0A07]" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
-                  </svg>
-                </div>
-                <div>
-                  <h2 className="font-serif text-base font-bold text-[#C7A27C] mb-2">Por qué Lumina te lo recomienda</h2>
-                  <p className="text-[#BBA892] leading-relaxed text-sm">{rec.fullReason}</p>
-                </div>
+              <div className="flex items-center gap-2">
+                <Globe className="w-3.5 h-3.5" />
+                <span>{recommendation.genre}</span>
               </div>
-            </div>
-
-            {/* Tags */}
-            <div>
-              <p className="text-[10px] uppercase tracking-widest text-[#BBA892]/60 font-bold mb-3">Etiquetas</p>
-              <div className="flex flex-wrap gap-2">
-                {rec.tags?.map((tag) => (
-                  <span key={tag} className="px-3 py-1.5 rounded-full bg-[var(--beige)] text-[var(--foreground)] text-sm">
-                    {tag}
-                  </span>
-                ))}
-              </div>
-            </div>
-
-            {/* CTA */}
-            <div className="pt-5 flex items-center justify-between"
-              style={{ borderTop: "1px solid rgba(199,162,124,0.1)" }}>
-              <p className="text-sm text-[#BBA892]">¿Quieres explorar más títulos?</p>
-              <button
-                onClick={onNewSearch}
-                className="px-7 py-3 rounded-full text-sm font-bold text-[#0D0A07] transition-all hover:-translate-y-0.5 cursor-pointer"
-                style={{ background: "#C7A27C", boxShadow: "0 6px 20px rgba(199,162,124,0.25)" }}
-              >
-                Nueva búsqueda
-              </button>
             </div>
           </div>
         </div>
-      </div>
+      </section>
+
+      {/* CONTENT SECTION */}
+      <section className="relative -mt-10 z-20 pb-40">
+        <div className="max-w-7xl mx-auto px-6 md:px-12 lg:px-20">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-20">
+            
+            {/* Main Column */}
+            <div className="lg:col-span-8 flex flex-col gap-16">
+              
+              {/* Synopsis */}
+              <div className="flex flex-col gap-8 bg-card rounded-[3rem] p-12 md:p-16 border border-border editorial-shadow">
+                <div className="flex flex-col gap-2">
+                  <p className="text-primary text-[10px] font-bold uppercase tracking-[0.3em]">El Argumento</p>
+                  <h2 className="font-serif text-4xl font-light">Sinopsis Editorial</h2>
+                </div>
+                <p className="text-foreground/80 text-xl leading-relaxed font-light italic">
+                  {recommendation.description}
+                </p>
+                <div className="pt-8 border-t border-border">
+                  <p className="text-muted-foreground leading-relaxed">
+                    Cada historia seleccionada por Lumina pasa por un proceso de curaduría emocional. Buscamos obras que no solo entretengan, sino que dejen una huella duradera en tu sensibilidad cinematográfica y literaria.
+                  </p>
+                </div>
+              </div>
+
+              {/* Editorial Reason */}
+              <div className="bg-primary/5 rounded-[3rem] p-12 md:p-16 border border-primary/20 editorial-shadow relative overflow-hidden">
+                <div className="absolute -top-10 -right-10 w-40 h-40 bg-primary/10 rounded-full blur-3xl" />
+                <div className="flex items-start gap-8 relative z-10">
+                  <div className="w-14 h-14 rounded-2xl bg-white flex items-center justify-center flex-shrink-0 editorial-shadow">
+                    <Sparkles className="w-7 h-7 text-primary" />
+                  </div>
+                  <div className="flex flex-col gap-4">
+                    <p className="text-primary text-[10px] font-bold uppercase tracking-[0.3em]">¿Por qué Lumina?</p>
+                    <h3 className="font-serif text-3xl font-light">Nota de Curaduría</h3>
+                    <p className="text-foreground/70 text-lg leading-relaxed italic">
+                      "{recommendation.reason}"
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Sidebar Column */}
+            <div className="lg:col-span-4 flex flex-col gap-8">
+              
+              {/* Interaction Card */}
+              <div className="bg-card rounded-[2.5rem] p-10 border border-border editorial-shadow sticky top-32">
+                <div className="flex flex-col gap-10">
+                  <div className="flex flex-col gap-6">
+                    <h4 className="font-serif text-2xl font-light">Acciones</h4>
+                    <div className="flex flex-col gap-3">
+                      <button className="w-full py-5 rounded-full bg-foreground text-white text-[10px] font-bold uppercase tracking-widest hover:bg-primary transition-all duration-500 editorial-shadow cursor-pointer flex items-center justify-center gap-3">
+                        {recommendation.type === "movie" ? <PlayCircle className="w-4 h-4" /> : <BookOpen className="w-4 h-4" />}
+                        {recommendation.type === "movie" ? "Ver Ahora" : "Empezar Lectura"}
+                      </button>
+                      <div className="grid grid-cols-2 gap-3">
+                        <button 
+                          onClick={onNewSearch}
+                          className="py-4 rounded-full border border-border text-[10px] font-bold uppercase tracking-widest hover:bg-secondary transition-all cursor-pointer flex items-center justify-center gap-2"
+                        >
+                          Nueva Búsqueda
+                        </button>
+                        <div className="grid grid-cols-2 gap-3">
+                          <button className="py-4 rounded-full border border-border text-[10px] font-bold uppercase tracking-widest hover:bg-secondary transition-all cursor-pointer flex items-center justify-center gap-2">
+                            <Bookmark className="w-3.5 h-3.5" />
+                          </button>
+                          <button className="py-4 rounded-full border border-border text-[10px] font-bold uppercase tracking-widest hover:bg-secondary transition-all cursor-pointer flex items-center justify-center gap-2">
+                            <Share2 className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="pt-8 border-t border-border flex flex-col gap-6">
+                    <h4 className="font-serif text-xl font-light">Detalles Técnicos</h4>
+                    <div className="flex flex-col gap-4">
+                      {[
+                        { label: "Director/Autor", value: recommendation.meta.split("·")[1]?.trim() || "N/A" },
+                        { label: "Año", value: recommendation.meta.split("·")[0]?.trim() || "N/A" },
+                        { label: "Género", value: recommendation.genre },
+                        { label: "Puntuación", value: rating },
+                      ].map((item, i) => (
+                        <div key={i} className="flex justify-between items-center text-[10px] tracking-widest uppercase">
+                          <span className="text-muted-foreground/60 font-bold">{item.label}</span>
+                          <span className="text-foreground font-bold">{item.value}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Quote Section */}
+              <div className="px-8 text-center">
+                <p className="text-[10px] text-muted-foreground/40 italic leading-relaxed uppercase tracking-[0.2em]">
+                  "Una historia no es solo lo que sucede, sino cómo nos hace sentir."
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
     </main>
   )
 }

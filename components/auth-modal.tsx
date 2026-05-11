@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { createClient } from "@/lib/supabase"
-import { X, Mail, Lock, User, ArrowRight } from "lucide-react"
+import { X, Mail, Lock, User, ArrowRight, LoaderCircle } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { z } from "zod"
 import { useForm } from "react-hook-form"
@@ -37,19 +37,16 @@ export function AuthModal({ isOpen, onClose, initialMode = "login" }: AuthModalP
   
   const supabase = createClient()
 
-  // Formulario de Login
   const loginForm = useForm<LoginValues>({
     resolver: zodResolver(loginSchema),
     defaultValues: { email: "", password: "" }
   })
 
-  // Formulario de Registro
   const registerForm = useForm<RegisterValues>({
     resolver: zodResolver(registerSchema),
     defaultValues: { name: "", email: "", password: "" }
   })
 
-  // Sincronizar el modo cuando se abre el modal
   useEffect(() => {
     if (isOpen) {
       setMode(initialMode)
@@ -90,7 +87,6 @@ export function AuthModal({ isOpen, onClose, initialMode = "login" }: AuthModalP
       if (authError) throw authError
       
       if (authData.user) {
-        // Verificar si ya existe en la tabla usuarios para evitar duplicados
         const { data: existingUser } = await supabase
           .from("usuarios")
           .select("id")
@@ -112,30 +108,33 @@ export function AuthModal({ isOpen, onClose, initialMode = "login" }: AuthModalP
   }
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-black/40 backdrop-blur-sm animate-in fade-in duration-300">
-      <div className="w-full max-w-md bg-[var(--card)] rounded-3xl p-8 shadow-2xl border border-[var(--border)] relative overflow-hidden animate-in zoom-in-95 duration-300">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-background/80 backdrop-blur-md animate-in fade-in duration-500">
+      <div className="w-full max-w-sm bg-card rounded-[2.5rem] p-8 md:p-10 border border-border editorial-shadow relative overflow-hidden animate-in zoom-in-95 duration-700">
         <button 
           onClick={onClose}
-          className="absolute top-6 right-6 p-2 rounded-full hover:bg-[var(--beige)] text-[var(--muted-foreground)] transition-colors z-10"
+          className="absolute top-6 right-6 p-2 rounded-full hover:bg-secondary text-muted-foreground hover:text-foreground transition-all z-10 cursor-pointer"
         >
-          <X className="w-5 h-5" />
+          <X className="w-4 h-4" />
         </button>
 
-        <div className="absolute -top-24 -right-24 w-48 h-48 bg-[var(--teal)]/5 rounded-full blur-3xl" />
-        <div className="absolute -bottom-24 -left-24 w-48 h-48 bg-[var(--terracotta)]/5 rounded-full blur-3xl" />
+        <div className="absolute -top-24 -right-24 w-48 h-48 bg-primary/5 rounded-full blur-3xl" />
+        <div className="absolute -bottom-24 -left-24 w-48 h-48 bg-primary/5 rounded-full blur-3xl" />
 
         <div className="relative">
-          <div className="mb-8 text-center">
-            <h2 className="font-serif text-3xl font-bold text-[var(--foreground)] mb-2">
+          <div className="mb-8">
+            <p className="text-primary text-[9px] font-bold uppercase tracking-[0.4em] mb-3">
+              Lumina Access
+            </p>
+            <h2 className="font-serif text-3xl font-light text-foreground tracking-tight leading-tight mb-2">
               {mode === "login" ? "Bienvenido de nuevo" : "Crea tu cuenta"}
             </h2>
-            <p className="text-[var(--muted-foreground)] text-sm">
-              {mode === "login" ? "Ingresa tus credenciales para continuar." : "Únete a Lumina y descubre historias increíbles."}
+            <p className="text-muted-foreground text-xs italic">
+              {mode === "login" ? "Ingresa para continuar tu viaje." : "Únete a la galería editorial de historias curadas."}
             </p>
           </div>
 
           {error && (
-            <div className="mb-6 p-4 rounded-xl bg-red-500/10 border border-red-500/20 text-red-500 text-xs">
+            <div className="mb-8 p-5 rounded-2xl bg-destructive/10 border border-destructive/20 text-destructive text-xs font-bold tracking-tight">
               {error}
             </div>
           )}
@@ -149,101 +148,85 @@ export function AuthModal({ isOpen, onClose, initialMode = "login" }: AuthModalP
             className="flex flex-col gap-4"
           >
             {mode === "register" && (
-              <div className="space-y-1">
-                <label className="text-xs font-semibold uppercase tracking-wider text-[var(--muted-foreground)] ml-1">
+              <div className="flex flex-col gap-2">
+                <label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground ml-2">
                   Nombre completo
                 </label>
-                <div className="relative group">
-                  <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[var(--muted-foreground)] group-focus-within:text-[var(--teal)] transition-colors" />
+                <div className="relative">
+                  <User className="absolute left-6 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/50" />
                   <input
                     {...registerForm.register("name")}
                     type="text"
                     placeholder="Tu nombre"
-                    maxLength={50}
                     className={cn(
-                      "w-full pl-12 pr-4 py-3.5 rounded-2xl bg-[var(--beige)]/50 border border-[var(--border)] focus:border-[var(--teal)] outline-none transition-all placeholder:text-[var(--muted-foreground)]/50 text-sm",
-                      registerForm.formState.errors.name && "border-red-500 focus:border-red-500"
+                      "w-full pl-14 pr-6 py-3 rounded-2xl bg-background border border-border focus:border-primary/50 focus:editorial-shadow outline-none transition-all placeholder:text-muted-foreground/30 text-sm",
+                      registerForm.formState.errors.name && "border-destructive/50"
                     )}
                   />
                 </div>
-                {registerForm.formState.errors.name && (
-                  <p className="text-[10px] text-red-500 ml-1">{registerForm.formState.errors.name.message}</p>
-                )}
               </div>
             )}
 
-            <div className="space-y-1">
-              <label className="text-xs font-semibold uppercase tracking-wider text-[var(--muted-foreground)] ml-1">
+            <div className="flex flex-col gap-2">
+              <label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground ml-2">
                 Correo electrónico
               </label>
-              <div className="relative group">
-                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[var(--muted-foreground)] group-focus-within:text-[var(--teal)] transition-colors" />
+              <div className="relative">
+                <Mail className="absolute left-6 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/50" />
                 <input
                   {...(mode === "login" ? loginForm.register("email") : registerForm.register("email"))}
                   type="email"
                   placeholder="ejemplo@correo.com"
-                  maxLength={100}
                   className={cn(
-                    "w-full pl-12 pr-4 py-3.5 rounded-2xl bg-[var(--beige)]/50 border border-[var(--border)] focus:border-[var(--teal)] outline-none transition-all placeholder:text-[var(--muted-foreground)]/50 text-sm",
-                    (mode === "login" ? loginForm.formState.errors.email : registerForm.formState.errors.email) && "border-red-500 focus:border-red-500"
+                    "w-full pl-14 pr-6 py-3 rounded-2xl bg-background border border-border focus:border-primary/50 focus:editorial-shadow outline-none transition-all placeholder:text-muted-foreground/30 text-sm",
+                    (mode === "login" ? loginForm.formState.errors.email : registerForm.formState.errors.email) && "border-destructive/50"
                   )}
                 />
               </div>
-              {(mode === "login" ? loginForm.formState.errors.email : registerForm.formState.errors.email) && (
-                <p className="text-[10px] text-red-500 ml-1">
-                  {(mode === "login" ? loginForm.formState.errors.email?.message : registerForm.formState.errors.email?.message)}
-                </p>
-              )}
             </div>
 
-            <div className="space-y-1">
-              <label className="text-xs font-semibold uppercase tracking-wider text-[var(--muted-foreground)] ml-1">
+            <div className="flex flex-col gap-2">
+              <label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground ml-2">
                 Contraseña
               </label>
-              <div className="relative group">
-                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[var(--muted-foreground)] group-focus-within:text-[var(--teal)] transition-colors" />
+              <div className="relative">
+                <Lock className="absolute left-6 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/50" />
                 <input
                   {...(mode === "login" ? loginForm.register("password") : registerForm.register("password"))}
                   type="password"
                   placeholder="••••••••"
-                  maxLength={50}
                   className={cn(
-                    "w-full pl-12 pr-4 py-3.5 rounded-2xl bg-[var(--beige)]/50 border border-[var(--border)] focus:border-[var(--teal)] outline-none transition-all placeholder:text-[var(--muted-foreground)]/50 text-sm",
-                    (mode === "login" ? loginForm.formState.errors.password : registerForm.formState.errors.password) && "border-red-500 focus:border-red-500"
+                    "w-full pl-14 pr-6 py-3 rounded-2xl bg-background border border-border focus:border-primary/50 focus:editorial-shadow outline-none transition-all placeholder:text-muted-foreground/30 text-sm",
+                    (mode === "login" ? loginForm.formState.errors.password : registerForm.formState.errors.password) && "border-destructive/50"
                   )}
                 />
               </div>
-              {(mode === "login" ? loginForm.formState.errors.password : registerForm.formState.errors.password) && (
-                <p className="text-[10px] text-red-500 ml-1">
-                  {(mode === "login" ? loginForm.formState.errors.password?.message : registerForm.formState.errors.password?.message)}
-                </p>
-              )}
             </div>
 
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full mt-4 bg-[var(--teal)] text-white py-4 rounded-2xl font-semibold shadow-lg shadow-[var(--teal)]/20 hover:bg-[var(--teal-dark)] active:scale-[0.98] transition-all flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed cursor-pointer"
+              className="w-full mt-4 bg-primary text-white py-4 rounded-full font-bold text-[10px] uppercase tracking-widest hover:editorial-shadow active:scale-[0.98] transition-all flex items-center justify-center gap-3 disabled:opacity-70 disabled:cursor-not-allowed cursor-pointer"
             >
               {isLoading ? (
-                <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                <LoaderCircle className="w-5 h-5 animate-spin" />
               ) : (
                 <>
                   {mode === "login" ? "Entrar a mi cuenta" : "Empezar ahora"}
-                  <ArrowRight className="w-5 h-5" />
+                  <ArrowRight className="w-4 h-4" />
                 </>
               )}
             </button>
           </form>
 
-          <div className="mt-8 pt-6 border-t border-[var(--border)] text-center">
-            <p className="text-[var(--muted-foreground)] text-sm">
+          <div className="mt-8 pt-8 border-t border-border text-center">
+            <p className="text-muted-foreground text-[10px] font-bold uppercase tracking-widest">
               {mode === "login" ? "¿Aún no tienes cuenta?" : "¿Ya tienes una cuenta?"}{" "}
               <button
                 onClick={() => setMode(mode === "login" ? "register" : "login")}
-                className="text-[var(--teal)] font-bold hover:underline cursor-pointer"
+                className="text-primary ml-2 hover:underline cursor-pointer"
               >
-                {mode === "login" ? "Regístrate gratis" : "Inicia sesión"}
+                {mode === "login" ? "Regístrate" : "Inicia sesión"}
               </button>
             </p>
           </div>
@@ -252,3 +235,4 @@ export function AuthModal({ isOpen, onClose, initialMode = "login" }: AuthModalP
     </div>
   )
 }
+

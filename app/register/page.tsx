@@ -61,7 +61,7 @@ export default function RegisterPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center p-6 bg-[var(--background)]">
-      <div className="w-full max-w-md animate-in fade-in zoom-in duration-500">
+      <div className="w-full max-w-sm animate-in fade-in zoom-in duration-500">
         <Link
           href="/"
           className="mb-8 flex items-center gap-2 text-sm text-[var(--muted-foreground)] hover:text-[var(--teal)] transition-colors group cursor-pointer"
@@ -70,13 +70,13 @@ export default function RegisterPage() {
           Volver al inicio
         </Link>
 
-        <div className="bg-[var(--card)] rounded-3xl p-8 shadow-2xl border border-[var(--border)] relative overflow-hidden">
+        <div className="bg-[var(--card)] rounded-3xl p-7 shadow-2xl border border-[var(--border)] relative overflow-hidden">
           <div className="absolute -top-24 -right-24 w-48 h-48 bg-[var(--teal)]/5 rounded-full blur-3xl" />
           <div className="absolute -bottom-24 -left-24 w-48 h-48 bg-[var(--terracotta)]/5 rounded-full blur-3xl" />
 
           <div className="relative">
             <div className="mb-8 text-center">
-              <h2 className="font-serif text-3xl font-bold text-[var(--foreground)] mb-2">
+              <h2 className="font-serif text-2xl font-bold text-[var(--foreground)] mb-2">
                 Crea tu cuenta
               </h2>
               <p className="text-[var(--muted-foreground)] text-sm">
@@ -103,7 +103,7 @@ export default function RegisterPage() {
                     required
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    className="w-full pl-12 pr-4 py-4 rounded-2xl bg-[var(--beige)]/50 border border-[var(--border)] focus:border-[var(--teal)] focus:ring-2 focus:ring-[var(--teal)]/20 outline-none transition-all placeholder:text-[var(--muted-foreground)]/50"
+                    className="w-full pl-12 pr-4 py-3 rounded-2xl bg-[var(--beige)]/50 border border-[var(--border)] focus:border-[var(--teal)] focus:ring-2 focus:ring-[var(--teal)]/20 outline-none transition-all placeholder:text-[var(--muted-foreground)]/50 text-sm"
                   />
                 </div>
               </div>
@@ -120,7 +120,7 @@ export default function RegisterPage() {
                     required
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="w-full pl-12 pr-4 py-4 rounded-2xl bg-[var(--beige)]/50 border border-[var(--border)] focus:border-[var(--teal)] focus:ring-2 focus:ring-[var(--teal)]/20 outline-none transition-all placeholder:text-[var(--muted-foreground)]/50"
+                    className="w-full pl-12 pr-4 py-3 rounded-2xl bg-[var(--beige)]/50 border border-[var(--border)] focus:border-[var(--teal)] focus:ring-2 focus:ring-[var(--teal)]/20 outline-none transition-all placeholder:text-[var(--muted-foreground)]/50 text-sm"
                   />
                 </div>
               </div>
@@ -137,7 +137,7 @@ export default function RegisterPage() {
                     required
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="w-full pl-12 pr-4 py-4 rounded-2xl bg-[var(--beige)]/50 border border-[var(--border)] focus:border-[var(--teal)] focus:ring-2 focus:ring-[var(--teal)]/20 outline-none transition-all placeholder:text-[var(--muted-foreground)]/50"
+                    className="w-full pl-12 pr-4 py-3 rounded-2xl bg-[var(--beige)]/50 border border-[var(--border)] focus:border-[var(--teal)] focus:ring-2 focus:ring-[var(--teal)]/20 outline-none transition-all placeholder:text-[var(--muted-foreground)]/50 text-sm"
                   />
                 </div>
               </div>
@@ -145,7 +145,7 @@ export default function RegisterPage() {
               <button
                 type="submit"
                 disabled={isLoading}
-                className="w-full mt-4 bg-[var(--teal)] text-white py-4 rounded-2xl font-semibold shadow-lg shadow-[var(--teal)]/20 hover:bg-[var(--teal-dark)] active:scale-[0.98] transition-all flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed cursor-pointer"
+                className="w-full mt-2 bg-[var(--teal)] text-white py-3.5 rounded-2xl font-semibold shadow-lg shadow-[var(--teal)]/20 hover:bg-[var(--teal-dark)] active:scale-[0.98] transition-all flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed cursor-pointer text-sm"
               >
                 {isLoading ? (
                   <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />

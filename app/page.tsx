@@ -28,6 +28,10 @@ export default function Home() {
   const searchParams = useSearchParams()
 
   useEffect(() => {
+    window.scrollTo(0, 0)
+  }, [screen])
+
+  useEffect(() => {
     const getUser = async () => {
       const { data: { user } } = await supabase.auth.getUser()
       setUser(user)
@@ -179,7 +183,15 @@ export default function Home() {
       })
 
       if (!apiResponse.ok) {
-        throw new Error("Error en la petición a la API")
+        let errorMsg = "Error en la petición a la API";
+        try {
+          const errorData = await apiResponse.json();
+          console.error("API Error Details:", errorData);
+          errorMsg = errorData.details || errorData.error || errorMsg;
+        } catch (e) {
+          console.error("No se pudo parsear el error de la API:", e);
+        }
+        throw new Error(errorMsg);
       }
 
       const { recommendations: generatedRecommendations } = await apiResponse.json()

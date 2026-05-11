@@ -5,7 +5,7 @@ const genAI = new GoogleGenerativeAI(process.env.GOOGLE_GEMINI_API_KEY || "")
 
 
 type PreferencesBody = {
-  name: string
+  name?: string
   genres: string[]
   movieActors: string
   bookAuthors: string
@@ -58,7 +58,7 @@ async function searchMovie(title: string) {
       : "Película",
     description: movie.overview || "Sin descripción disponible.",
     reason: "",
-    emoji: "🎬",
+    emoji: "Clapperboard",
     color: "linear-gradient(135deg, #2F7C7A, #1f4f4e)",
     imageUrl: movie.poster_path
       ? `https://image.tmdb.org/t/p/w500${movie.poster_path}`
@@ -92,7 +92,7 @@ async function searchBook(title: string) {
     meta: book.authors?.join(", ") || "Autor no disponible",
     description: book.description || "Sin descripción disponible.",
     reason: "",
-    emoji: "📚",
+    emoji: "BookOpen",
     color: "linear-gradient(135deg, #C98663, #8f5538)",
     imageUrl: (book.imageLinks?.thumbnail || book.imageLinks?.smallThumbnail)?.replace("http://", "https://") || null,
   }
@@ -101,7 +101,14 @@ async function searchBook(title: string) {
 export async function POST(request: Request) {
   try {
     const preferences = (await request.json()) as PreferencesBody
-    console.log("Usando API Key (primeros 5 caracteres):", process.env.GOOGLE_GEMINI_API_KEY?.substring(0, 5))
+    console.log("Recepción de petición /api/recommend con preferencias:", preferences)
+    
+    if (!process.env.GOOGLE_GEMINI_API_KEY) {
+      console.error("GOOGLE_GEMINI_API_KEY no está configurada")
+      throw new Error("GOOGLE_GEMINI_API_KEY no está configurada en el servidor")
+    }
+
+    console.log("Usando API Key (primeros 5 caracteres):", process.env.GOOGLE_GEMINI_API_KEY.substring(0, 5))
 
 
     const prompt = `
@@ -109,13 +116,13 @@ Eres un recomendador inteligente de libros y películas.
 
 Genera recomendaciones según estas preferencias del usuario:
 
-Nombre: ${preferences.name}
-Géneros: ${preferences.genres.join(", ")}
+Nombre: ${preferences.name || "Usuario de Lumina"}
+Géneros: ${(preferences.genres || []).join(", ") || "No específicos"}
 Actores favoritos: ${preferences.movieActors || "No indicó"}
 Autores favoritos: ${preferences.bookAuthors || "No indicó"}
-Tipo de historia: ${preferences.storyType}
-Estado de ánimo: ${preferences.mood}
-Tipo de contenido solicitado: ${preferences.mediaType}
+Tipo de historia: ${preferences.storyType || "No especificado"}
+Estado de ánimo: ${preferences.mood || "No especificado"}
+Tipo de contenido solicitado: ${preferences.mediaType || "both"}
 
 Reglas:
 - Si mediaType es "movies", recomienda solo películas.
@@ -139,29 +146,51 @@ Formato:
 ]
 `
 
+    console.log("Preparando modelo Gemini...")
     const model = genAI.getGenerativeModel({ 
-      model: "gemini-flash-latest",
+      model: "gemini-2.0-flash-lite",
       generationConfig: {
         responseMimeType: "application/json",
       }
     })
 
-
-
-
+    console.log("Generando contenido con Gemini...")
     const result = await model.generateContent(prompt)
     const response = await result.response
-    const text = response.text()
+    
+    let text = ""
+    try {
+      text = response.text()
+      console.log("Respuesta recibida de Gemini (fragmento):", text.substring(0, 100))
+    } catch (e: any) {
+      console.error("Error al obtener texto de Gemini:", e)
+      // Verificar si fue bloqueado por seguridad
+      const safetyRatings = response.candidates?.[0]?.safetyRatings
+      if (safetyRatings) {
+        console.error("Safety Ratings:", JSON.stringify(safetyRatings))
+      }
+      throw new Error(`Error en la respuesta de IA: ${e.message || "Posible bloqueo de seguridad"}`)
+    }
     
     let aiRecommendations: AiRecommendation[] = []
     try {
-      // Intentar parsear directamente si Gemini respetó el responseMimeType
-      aiRecommendations = JSON.parse(text)
+      // Limpiar el texto por si Gemini añade markdown
+      const jsonContent = text.includes("```json") 
+        ? text.split("```json")[1].split("```")[0].trim()
+        : text.includes("```")
+          ? text.split("```")[1].split("```")[0].trim()
+          : text.trim()
+
+      aiRecommendations = JSON.parse(jsonContent)
     } catch (e) {
-      // Si falla, intentar extraer de bloques de código markdown
+      console.warn("Fallo al parsear JSON directo, intentando regex:", e)
       const jsonMatch = text.match(/\[[\s\S]*\]/)
-      const cleanText = jsonMatch ? jsonMatch[0] : "[]"
-      aiRecommendations = JSON.parse(cleanText)
+      if (jsonMatch) {
+        aiRecommendations = JSON.parse(jsonMatch[0])
+      } else {
+        console.error("No se encontró JSON válido en la respuesta:", text)
+        throw new Error("La IA no devolvió un formato válido")
+      }
     }
 
 
@@ -182,7 +211,7 @@ Formato:
           reason: rec.reason,
           fullReason: rec.fullReason || rec.reason,
           synopsis: externalData?.description || rec.synopsis || "Sinopsis no disponible.",
-          emoji: externalData?.emoji || (rec.type === "movie" ? "🎬" : "📚"),
+          emoji: externalData?.emoji || (rec.type === "movie" ? "Clapperboard" : "BookOpen"),
           color: externalData?.color || (rec.type === "movie" ? "linear-gradient(135deg, #2F7C7A, #1f4f4e)" : "linear-gradient(135deg, #C98663, #8f5538)"),
           imageUrl: externalData?.imageUrl || null,
           tags: rec.tags || [],
@@ -197,12 +226,13 @@ Formato:
     return NextResponse.json({
       recommendations: enrichedResults,
     })
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error generando recomendaciones:", error)
 
     return NextResponse.json(
       {
         error: "No se pudieron generar las recomendaciones.",
+        details: error.message || String(error)
       },
       { status: 500 }
     )
