@@ -2,8 +2,8 @@
 
 import { useState } from "react"
 import { cn } from "@/lib/utils"
-import Link from "next/link"
 import { Info } from "lucide-react"
+import { AuthModal } from "./auth-modal"
 
 export type Preferences = {
   genres: string[]
@@ -37,6 +37,10 @@ export function PreferencesForm({ onSubmit, onBack, isLoggedIn }: PreferencesFor
     storyType: "",
     mood: "",
     mediaType: "both",
+  })
+  const [authModal, setAuthModal] = useState<{ isOpen: boolean; mode: "login" | "register" }>({
+    isOpen: false,
+    mode: "login",
   })
 
   const toggleGenre = (g: string) => {
@@ -98,22 +102,28 @@ export function PreferencesForm({ onSubmit, onBack, isLoggedIn }: PreferencesFor
                 </p>
               </div>
               <div className="flex gap-2">
-                <Link 
-                  href="/login" 
+                <button 
+                  onClick={() => setAuthModal({ isOpen: true, mode: "login" })}
                   className="px-4 py-2 text-xs font-bold text-[var(--teal)] hover:bg-[var(--teal)]/10 rounded-full transition-colors cursor-pointer"
                 >
                   Iniciar sesión
-                </Link>
-                <Link 
-                  href="/register" 
+                </button>
+                <button 
+                  onClick={() => setAuthModal({ isOpen: true, mode: "register" })}
                   className="px-4 py-2 text-xs font-bold bg-[var(--teal)] text-white rounded-full hover:bg-[var(--teal-dark)] transition-all shadow-sm cursor-pointer"
                 >
                   Registrarse
-                </Link>
+                </button>
               </div>
             </div>
           )}
         </div>
+
+        <AuthModal 
+          isOpen={authModal.isOpen} 
+          onClose={() => setAuthModal({ ...authModal, isOpen: false })} 
+          initialMode={authModal.mode}
+        />
 
         <div className="grid grid-cols-3 gap-8">
           <div className="col-span-2 flex flex-col gap-8">
