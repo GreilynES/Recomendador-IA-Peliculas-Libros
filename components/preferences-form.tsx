@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { cn } from "@/lib/utils"
-import { Info } from "lucide-react"
+import { Clock, Info } from "lucide-react"
 import { AuthModal } from "./auth-modal"
 
 export type Preferences = {
@@ -18,6 +18,22 @@ type PreferencesFormProps = {
   onSubmit: (prefs: Preferences) => void
   onBack: () => void
   isLoggedIn: boolean
+  history: HistoryItem[]
+  isHistoryLoading: boolean
+}
+
+export type HistoryItem = {
+  id: number
+  tipo_recomendacion: string
+  consulta: string
+  resultado: unknown
+}
+
+type HistoryResult = {
+  id?: string
+  title?: string
+  type?: "movie" | "book"
+  meta?: string
 }
 
 const GENRES = [
@@ -49,7 +65,13 @@ const cardStyle = {
   backdropFilter: "blur(10px)",
 }
 
-export function PreferencesForm({ onSubmit, onBack, isLoggedIn }: PreferencesFormProps) {
+export function PreferencesForm({
+  onSubmit,
+  onBack,
+  isLoggedIn,
+  history,
+  isHistoryLoading,
+}: PreferencesFormProps) {
   const [prefs, setPrefs] = useState<Preferences>({
     genres: [],
     movieActors: "",
@@ -84,6 +106,14 @@ export function PreferencesForm({ onSubmit, onBack, isLoggedIn }: PreferencesFor
     !!prefs.storyType,
     !!prefs.mood,
   ].filter(Boolean).length
+
+  const getHistoryResults = (resultado: unknown) => {
+    if (!Array.isArray(resultado)) return []
+
+    return resultado.filter((item): item is HistoryResult => {
+      return typeof item === "object" && item !== null && "title" in item
+    })
+  }
 
   return (
     <main className="min-h-screen bg-[#0D0A07] pt-24 pb-20 relative overflow-hidden">
@@ -289,7 +319,82 @@ export function PreferencesForm({ onSubmit, onBack, isLoggedIn }: PreferencesFor
                   </button>
                 ))}
               </div>
+
             </section>
+
+            {isLoggedIn && (
+              <section className="bg-[var(--card)] rounded-2xl p-8 shadow-sm border border-[var(--border)]">
+                <div className="flex items-center gap-3 mb-5">
+                  <Clock className="w-5 h-5 text-[var(--teal)]" />
+                  <h2 className="font-serif text-xl font-semibold text-[var(--foreground)]">
+                    Historial guardado
+                  </h2>
+                </div>
+
+                {isHistoryLoading ? (
+                  <p className="text-sm text-[var(--muted-foreground)]">
+                    Cargando tu historial...
+                  </p>
+                ) : history.length > 0 ? (
+                  <div className="flex flex-col gap-4">
+                    {history.map((item) => {
+                      const results = getHistoryResults(item.resultado)
+
+                      return (
+                        <article
+                          key={item.id}
+                          className="rounded-xl border border-[var(--border)] bg-[var(--background)] p-5"
+                        >
+                          <div className="flex items-start justify-between gap-4 mb-2">
+                            <span className="text-xs font-semibold uppercase tracking-wider text-[var(--teal)]">
+                              {item.tipo_recomendacion}
+                            </span>
+                            {results.length > 0 && (
+                              <span className="text-xs text-[var(--muted-foreground)] whitespace-nowrap">
+                                {results.length} resultados
+                              </span>
+                            )}
+                          </div>
+
+                          <p className="text-sm text-[var(--foreground)] leading-relaxed">
+                            {item.consulta}
+                          </p>
+
+                          {results.length > 0 && (
+                            <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-2">
+                              {results.map((result, index) => (
+                                <div
+                                  key={result.id ?? `${item.id}-${index}`}
+                                  className="rounded-lg border border-[var(--border)] bg-[var(--card)] px-3 py-2"
+                                >
+                                  <div className="flex items-center gap-2">
+                                    <span className="text-sm">
+                                      {result.type === "book" ? "📚" : "🎬"}
+                                    </span>
+                                    <p className="text-sm font-semibold text-[var(--foreground)] leading-snug">
+                                      {result.title}
+                                    </p>
+                                  </div>
+                                  {result.meta && (
+                                    <p className="mt-1 pl-7 text-xs text-[var(--muted-foreground)]">
+                                      {result.meta}
+                                    </p>
+                                  )}
+                                </div>
+                              ))}
+                            </div>
+                          )}
+                        </article>
+                      )
+                    })}
+                  </div>
+                ) : (
+                  <p className="text-sm text-[var(--muted-foreground)]">
+                    Todavía no tienes recomendaciones guardadas.
+                  </p>
+                )}
+              </section>
+            )}
           </div>
 
           {/* Sidebar — sticky profile */}

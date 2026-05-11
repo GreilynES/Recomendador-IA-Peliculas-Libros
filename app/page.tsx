@@ -1,10 +1,10 @@
 "use client"
 
-import { useState, useEffect, useMemo } from "react"
+import { useState, useEffect, useMemo, useCallback } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { Navbar } from "@/components/navbar"
 import { LandingPage } from "@/components/landing-page"
-import { PreferencesForm, type Preferences } from "@/components/preferences-form"
+import { PreferencesForm, type HistoryItem, type Preferences } from "@/components/preferences-form"
 import { LoadingScreen } from "@/components/loading-screen"
 import { ResultsPage } from "@/components/results-page"
 import { DetailPage } from "@/components/detail-page"
@@ -20,6 +20,8 @@ export default function Home() {
   const [selectedRec, setSelectedRec] = useState<Recommendation | null>(null)
   const [recommendations, setRecommendations] = useState<Recommendation[]>([])
   const [user, setUser] = useState<any>(null)
+  const [history, setHistory] = useState<HistoryItem[]>([])
+  const [isHistoryLoading, setIsHistoryLoading] = useState(false)
 
   const router = useRouter()
   const supabase = useMemo(() => createClient(), [])
@@ -41,6 +43,82 @@ export default function Home() {
       subscription.unsubscribe()
     }
   }, [supabase])
+
+  const getUsuarioId = useCallback(async () => {
+    if (!user) return null
+
+    const { data: usuarioRecord, error: userError } = await supabase
+      .from("usuarios")
+      .select("id")
+      .eq("auth_id", user.id)
+      .limit(1)
+      .maybeSingle()
+
+    if (userError) {
+      console.error("Error buscando usuario:", userError)
+      return null
+    }
+
+    if (usuarioRecord) {
+      return usuarioRecord.id
+    }
+
+    const { data: newUser, error: createError } = await supabase
+      .from("usuarios")
+      .insert([{
+        auth_id: user.id,
+        nombre: user.user_metadata?.full_name || "Usuario",
+        email: user.email
+      }])
+      .select("id")
+      .single()
+
+    if (createError) {
+      console.error("Error creando usuario:", createError)
+      return null
+    }
+
+    return newUser?.id ?? null
+  }, [supabase, user])
+
+  const loadHistory = useCallback(async () => {
+    if (!user) {
+      setHistory([])
+      return
+    }
+
+    setIsHistoryLoading(true)
+
+    try {
+      const userId = await getUsuarioId()
+
+      if (!userId) {
+        setHistory([])
+        return
+      }
+
+      const { data, error } = await supabase
+        .from("historial")
+        .select("id, tipo_recomendacion, consulta, resultado")
+        .eq("usuario_id", userId)
+        .order("id", { ascending: false })
+        .limit(5)
+
+      if (error) {
+        console.error("Error cargando historial:", error)
+        setHistory([])
+        return
+      }
+
+      setHistory(data ?? [])
+    } finally {
+      setIsHistoryLoading(false)
+    }
+  }, [getUsuarioId, supabase, user])
+
+  useEffect(() => {
+    loadHistory()
+  }, [loadHistory])
 
   useEffect(() => {
     if (searchParams.get("screen") === "preferences") {
@@ -69,40 +147,7 @@ export default function Home() {
     setScreen("loading")
 
     try {
-      let userId = null
-
-      if (user) {
-        const { data: usuarioRecord, error: userError } = await supabase
-          .from("usuarios")
-          .select("id")
-          .eq("auth_id", user.id)
-          .limit(1)
-          .maybeSingle()
-
-        if (userError) {
-          console.error("Error buscando usuario:", userError)
-        }
-
-        if (usuarioRecord) {
-          userId = usuarioRecord.id
-        } else {
-          const { data: newUser, error: createError } = await supabase
-            .from("usuarios")
-            .insert([{
-              auth_id: user.id,
-              nombre: user.user_metadata?.full_name || "Usuario",
-              email: user.email
-            }])
-            .select()
-            .single()
-
-          if (createError) {
-            console.error("Error creando usuario:", createError)
-          }
-
-          if (newUser) userId = newUser.id
-        }
-      }
+      const userId = await getUsuarioId()
 
       const actores = prefs.movieActors
         ? prefs.movieActors.split(",").map((a) => a.trim()).filter(Boolean)
@@ -163,6 +208,8 @@ export default function Home() {
 
         if (historialError) {
           console.error("Error guardando historial:", historialError)
+        } else {
+          loadHistory()
         }
       }
 
@@ -207,6 +254,8 @@ export default function Home() {
           onSubmit={handlePreferencesSubmit}
           onBack={() => setScreen("landing")}
           isLoggedIn={!!user}
+          history={history}
+          isHistoryLoading={isHistoryLoading}
         />
       )}
 
