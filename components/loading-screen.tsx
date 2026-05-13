@@ -33,12 +33,12 @@ export function LoadingScreen() {
   }, [])
 
   return (
-    <main className="min-h-screen bg-background flex flex-col items-center justify-center relative overflow-hidden grain-subtle">
+    <main className="min-h-screen max-h-screen bg-background flex flex-col items-center justify-center relative overflow-hidden grain-subtle">
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-primary/5 rounded-full blur-[120px]" />
       </div>
 
-      <div className="max-w-2xl w-full mx-auto px-8 flex flex-col items-center text-center gap-16 relative z-10">
+      <div className="max-w-2xl w-full mx-auto px-4 sm:px-6 md:px-8 flex flex-col items-center text-center gap-8 sm:gap-12 md:gap-16 relative z-10 overflow-y-auto max-h-[calc(100vh-4rem)] py-8">
         
         {/* Animated Loader */}
         <div className="relative">
@@ -59,7 +59,7 @@ export function LoadingScreen() {
             <p className="text-primary text-[10px] font-bold uppercase tracking-[0.4em] animate-pulse">
               Curating Stories
             </p>
-            <h1 className="font-serif text-5xl md:text-7xl font-light text-foreground tracking-tight leading-tight">
+            <h1 className="font-serif text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-light text-foreground tracking-tight leading-tight">
               Creando tu <br /> 
               <span className="italic font-extralight text-primary">atmósfera</span>
             </h1>
@@ -73,7 +73,7 @@ export function LoadingScreen() {
         </div>
 
         {/* Progress System */}
-        <div className="w-full max-w-sm flex flex-col gap-4">
+        <div className="w-full max-w-sm flex flex-col gap-3 sm:gap-4">
           <div className="h-1 w-full bg-secondary rounded-full overflow-hidden">
             <div 
               className="h-full bg-primary transition-all duration-500 ease-out"
@@ -107,4 +107,4 @@ export function LoadingScreen() {
       `}</style>
     </main>
   )
-}
+}

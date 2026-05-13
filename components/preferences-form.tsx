@@ -321,47 +321,6 @@ export function PreferencesForm({
                 ))}
               </div>
             </section>
-
-            {isLoggedIn && history.length > 0 && (
-              <section className="bg-card rounded-[2.5rem] p-10 md:p-14 border border-border editorial-shadow">
-                <div className="flex items-center gap-4 mb-10">
-                  <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
-                    <Clock className="w-5 h-5 text-primary" />
-                  </div>
-                  <h2 className="font-serif text-3xl font-light text-foreground">Exploraciones Pasadas</h2>
-                </div>
-
-                <div className="flex flex-col gap-6">
-                  {history.map((item) => {
-                    const results = getHistoryResults(item.resultado)
-                    return (
-                      <article key={item.id} className="group p-8 rounded-[2rem] border border-border bg-background/40 hover:bg-background hover:editorial-shadow transition-all duration-500">
-                        <div className="flex items-start justify-between gap-6 mb-6">
-                          <div className="flex flex-col gap-2">
-                            <span className="text-[10px] font-bold uppercase tracking-widest text-primary italic">
-                              {item.tipo_recomendacion}
-                            </span>
-                            <p className="text-base text-foreground leading-relaxed font-light">
-                              {item.consulta}
-                            </p>
-                          </div>
-                        </div>
-
-                        {results.length > 0 && (
-                          <div className="flex flex-wrap gap-2">
-                            {results.map((result, idx) => (
-                              <div key={idx} className="px-4 py-2 rounded-full bg-secondary/50 border border-border text-[10px] font-bold text-muted-foreground">
-                                {result.title}
-                              </div>
-                            ))}
-                          </div>
-                        )}
-                      </article>
-                    )
-                  })}
-                </div>
-              </section>
-            )}
           </div>
 
           {/* Sidebar - Summary */}

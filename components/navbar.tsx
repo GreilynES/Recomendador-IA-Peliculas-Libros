@@ -1,9 +1,11 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Link from "next/link"
-import { usePathname } from "next/navigation"
+import { usePathname, useRouter } from "next/navigation"
 import { cn } from "@/lib/utils"
+import { createClient } from "@/lib/supabase"
+import { LogOut } from "lucide-react"
 
 type NavbarProps = {
   variant?: "transparent" | "solid"
@@ -13,7 +15,44 @@ type NavbarProps = {
 
 export function Navbar({ variant = "solid", onStartClick, onLoginClick }: NavbarProps) {
   const [menuOpen, setMenuOpen] = useState(false)
+  const [user, setUser] = useState<any>(null)
+  const [isLoading, setIsLoading] = useState(true)
   const pathname = usePathname()
+  const router = useRouter()
+  const supabase = createClient()
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const { data: { user } } = await supabase.auth.getUser()
+        setUser(user)
+      } catch (error) {
+        console.error("Error checking auth:", error)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    checkAuth()
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      setUser(session?.user || null)
+    })
+
+    return () => subscription?.unsubscribe()
+  }, [supabase])
+
+  const handleLogout = async () => {
+    try {
+      await supabase.auth.signOut()
+      router.push("/")
+      router.refresh()
+    } catch (error) {
+      console.error("Error logging out:", error)
+    }
+  }
+
+  const userName = user?.user_metadata?.full_name || user?.email?.split("@")[0] || "Usuario"
 
   const isActive = (path: string) => {
     if (path === "/#descubrir") return pathname === "/"
@@ -65,25 +104,51 @@ export function Navbar({ variant = "solid", onStartClick, onLoginClick }: Navbar
             Libros
             {activeLine("/books")}
           </Link>
+          {!isLoading && user && (
+            <Link href="/history" className={linkStyles("/history")}>
+              Historial
+              {activeLine("/history")}
+            </Link>
+          )}
         </nav>
 
         {/* CTA */}
         <div className="hidden md:flex items-center gap-6">
-          <button
-            onClick={onLoginClick}
-            className="text-xs font-semibold uppercase tracking-wider text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
-          >
-            Log in
-          </button>
-          <button
-            onClick={onStartClick}
-            className="px-7 py-2.5 rounded-full text-xs font-bold uppercase tracking-widest text-white transition-all hover:scale-[1.02] hover:editorial-shadow active:scale-[0.98] cursor-pointer"
-            style={{
-              background: "var(--primary)"
-            }}
-          >
-            Comenzar
-          </button>
+          {!isLoading && user ? (
+            <>
+              <span className="text-xs font-semibold uppercase tracking-wider text-foreground">
+                {userName}
+              </span>
+              <button
+                onClick={handleLogout}
+                className="flex items-center gap-2 px-7 py-2.5 rounded-full text-xs font-bold uppercase tracking-widest text-white transition-all hover:scale-[1.02] active:scale-[0.98] cursor-pointer"
+                style={{
+                  background: "var(--primary)"
+                }}
+              >
+                <LogOut className="w-4 h-4" />
+                Salir
+              </button>
+            </>
+          ) : (
+            <>
+              <button
+                onClick={onLoginClick}
+                className="text-xs font-semibold uppercase tracking-wider text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+              >
+                Log in
+              </button>
+              <button
+                onClick={onStartClick}
+                className="px-7 py-2.5 rounded-full text-xs font-bold uppercase tracking-widest text-white transition-all hover:scale-[1.02] hover:editorial-shadow active:scale-[0.98] cursor-pointer"
+                style={{
+                  background: "var(--primary)"
+                }}
+              >
+                Comenzar
+              </button>
+            </>
+          )}
         </div>
 
         {/* Mobile toggle */}
@@ -126,22 +191,48 @@ export function Navbar({ variant = "solid", onStartClick, onLoginClick }: Navbar
           >
             Libros
           </Link>
+          {!isLoading && user && (
+            <Link 
+              href="/history" 
+              className={cn("text-xl font-serif", isActive("/history") && "text-primary")} 
+              onClick={() => setMenuOpen(false)}
+            >
+              Historial
+            </Link>
+          )}
           <div className="pt-4 flex flex-col gap-4">
-            <button
-              onClick={() => { onLoginClick?.(); setMenuOpen(false) }}
-              className="w-full px-5 py-4 rounded-full text-muted-foreground text-sm font-semibold border border-border"
-            >
-              Iniciar sesión
-            </button>
-            <button
-              onClick={() => { onStartClick?.(); setMenuOpen(false) }}
-              className="w-full px-5 py-4 rounded-full bg-primary text-white text-sm font-bold"
-            >
-              Comenzar
-            </button>
+            {!isLoading && user ? (
+              <>
+                <div className="px-5 py-4 text-muted-foreground text-sm font-semibold">
+                  {userName}
+                </div>
+                <button
+                  onClick={() => { handleLogout(); setMenuOpen(false) }}
+                  className="w-full px-5 py-4 rounded-full bg-primary text-white text-sm font-bold flex items-center justify-center gap-2"
+                >
+                  <LogOut className="w-4 h-4" />
+                  Cerrar sesión
+                </button>
+              </>
+            ) : (
+              <>
+                <button
+                  onClick={() => { onLoginClick?.(); setMenuOpen(false) }}
+                  className="w-full px-5 py-4 rounded-full text-muted-foreground text-sm font-semibold border border-border"
+                >
+                  Iniciar sesión
+                </button>
+                <button
+                  onClick={() => { onStartClick?.(); setMenuOpen(false) }}
+                  className="w-full px-5 py-4 rounded-full bg-primary text-white text-sm font-bold"
+                >
+                  Comenzar
+                </button>
+              </>
+            )}
           </div>
         </div>
       )}
     </header>
   )
-}
+}

@@ -73,9 +73,9 @@ export function DetailPage({ recommendation, onBack, onNewSearch }: DetailPagePr
         </div>
 
         {/* Content Layer (Flex Flow) */}
-        <div className="relative z-20 w-full max-w-7xl mx-auto px-6 md:px-12 lg:px-20 pt-20 pb-20 flex flex-col items-center gap-8 md:gap-12 text-center">
+        <div className="relative z-20 w-full max-w-5xl mx-auto px-6 md:px-12 lg:px-20 flex flex-col items-center gap-0 md:gap-4 text-center">
           {/* Identity & Title */}
-          <div className="flex flex-col items-center gap-6 max-w-4xl">
+          <div className="flex flex-col items-center gap-0 max-w-4xl">
             <h1 className="font-serif text-4xl md:text-7xl font-light text-white tracking-tight leading-[1.1]">
               {recommendation.title}
             </h1>

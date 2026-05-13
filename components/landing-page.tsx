@@ -130,7 +130,7 @@ export function LandingPage({ onStart, onExample }: LandingPageProps) {
             
             <div className="relative group">
               <div className="aspect-square bg-secondary rounded-[3rem] overflow-hidden editorial-shadow relative z-10 transition-transform duration-700 group-hover:-translate-y-2">
-                <Image src="/ImgLanding.png" alt="Library View" fill className="object-cover opacity-80" />
+                <Image src="/DescribePhoto.png" alt="Library View" fill className="object-cover opacity-80" />
                 <div className="absolute inset-0 bg-primary/5" />
               </div>
               <div className="absolute -inset-4 bg-primary/10 rounded-[3rem] -z-10 rotate-3 group-hover:rotate-6 transition-transform duration-700" />
