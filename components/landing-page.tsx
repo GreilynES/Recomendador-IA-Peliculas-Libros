@@ -1,187 +1,235 @@
 "use client"
 
 import Image from "next/image"
+import Link from "next/link"
+import { 
+  Moon, 
+  Flame, 
+  CloudRain, 
+  Sparkles, 
+  Coffee, 
+  Mountain, 
+  Heart, 
+  Clapperboard 
+} from "lucide-react"
 
 type LandingPageProps = {
   onStart: () => void
   onExample: () => void
 }
 
+const MOODS = [
+  { label: "Reflexivo", icon: Moon },
+  { label: "Misterioso", icon: Flame },
+  { label: "Melancólico", icon: CloudRain },
+  { label: "Inspirador", icon: Sparkles },
+  { label: "Íntimo", icon: Coffee },
+  { label: "Aventurero", icon: Mountain },
+  { label: "Romántico", icon: Heart },
+  { label: "Cinematográfico", icon: Clapperboard },
+]
+
 export function LandingPage({ onStart, onExample }: LandingPageProps) {
   return (
-    <main className="min-h-screen bg-[var(--background)]">
-      {/* Hero */}
-      <section className="pt-32 pb-20 max-w-7xl mx-auto px-8">
-        <div className="grid grid-cols-2 gap-16 items-center min-h-[calc(100vh-8rem)]">
-          {/* Left */}
-          <div className="flex flex-col gap-8">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[var(--beige)] border border-[var(--border)] w-fit">
-              <span className="w-2 h-2 rounded-full bg-[var(--teal)]" />
-              <span className="text-xs font-medium text-[var(--muted-foreground)] uppercase tracking-widest">
-                Recomendaciones con IA
-              </span>
+    <main className="min-h-screen bg-background grain-subtle">
+
+      {/* HERO SECTION */}
+      <section className="relative min-h-screen flex items-center pt-32 overflow-hidden">
+        
+        {/* BACKGROUND IMAGE */}
+        <div className="absolute inset-0 z-0 bg-background">
+          <Image
+            src="/ImgLanding.png"
+            alt="Cinematic Background"
+            fill
+            className="object-cover object-left opacity-90"
+            priority
+          />
+          {/* PRONOUNCED ORGANIC WAVE DIVIDER */}
+          <div className="absolute bottom-0 left-0 w-full overflow-hidden leading-[0] translate-y-[1px]">
+            <svg 
+              className="relative block w-[calc(100%+1.3px)] h-[80px]" 
+              viewBox="0 0 1200 120" 
+              preserveAspectRatio="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path 
+                d="M0,0 C150,150 400,0 600,80 C800,160 1050,20 1200,100 V120 H0 Z" 
+                fill="var(--background)"
+                stroke="none"
+              ></path>
+            </svg>
+          </div>
+        </div>
+
+        <div className="max-w-7xl mx-auto px-6 md:px-12 lg:px-20 w-full relative z-10 flex justify-end pb-48">
+          
+          <div className="flex flex-col gap-8 max-w-2xl text-right items-end">
+            <div className="flex flex-col gap-2">
+              <h1 className="font-serif text-6xl md:text-8xl font-light leading-[0.95] text-foreground tracking-tight animate-in fade-in slide-in-from-right-5 duration-1000">
+                Historias <br />
+                que <span className="italic font-extralight text-primary">resuenan</span>
+              </h1>
             </div>
 
-            <h1 className="font-serif text-6xl font-bold leading-tight text-[var(--foreground)] text-balance">
-              Descubre tu próxima historia{" "}
-              <span className="text-[var(--teal)] italic">favorita</span>
-            </h1>
-
-            <p className="text-lg text-[var(--muted-foreground)] leading-relaxed max-w-md">
-              Lumina analiza tus gustos, estado de ánimo y preferencias para recomendarte
-              películas y libros que realmente disfrutarás. Personalizado, inteligente y
-              siempre relevante.
+            <p className="text-muted-foreground text-lg leading-relaxed max-w-lg animate-in fade-in slide-in-from-right-7 duration-1000 delay-200 font-light italic">
+              Un espacio minimalista para descubrir películas y libros curados por IA basándonos en tu sensibilidad, no solo en algoritmos genéricos.
             </p>
 
-            <div className="flex items-center gap-4">
-              <button
+            <div className="flex flex-wrap items-center justify-end gap-4 pt-2 animate-in fade-in slide-in-from-right-10 duration-1000 delay-500">
+              <button 
                 onClick={onStart}
-                className="group px-8 py-4 rounded-full bg-[var(--teal)] text-[var(--primary-foreground)] font-medium text-base hover:bg-[var(--teal-dark)] transition-all duration-200 shadow-md hover:shadow-lg hover:-translate-y-0.5 cursor-pointer"
+                className="group relative px-10 py-5 rounded-full font-bold text-[10px] uppercase tracking-widest text-white transition-all duration-500 hover:scale-[1.05] hover:editorial-shadow cursor-pointer overflow-hidden border border-primary"
+                style={{ background: "var(--primary)" }}
               >
-                Comenzar
-                <span className="inline-block ml-2 group-hover:translate-x-1 transition-transform">→</span>
+                <span className="relative z-10">Iniciar descubrimiento</span>
+                <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-500" />
               </button>
-              <button
-                onClick={onExample}
-                className="px-8 py-4 rounded-full border border-[var(--border)] text-[var(--foreground)] font-medium text-base hover:bg-[var(--beige)] transition-all duration-200 cursor-pointer"
+              
+              <Link 
+                href="#actos"
+                className="flex items-center gap-3 px-10 py-5 rounded-full border border-border bg-card/30 backdrop-blur-sm text-[10px] font-bold uppercase tracking-[0.2em] text-foreground hover:text-primary hover:border-primary/50 transition-all duration-300 cursor-pointer group hover:scale-[1.05] hover:editorial-shadow"
               >
-                Ver ejemplo
-              </button>
+                <svg className="w-3 h-3 fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M8 5v14l11-7z" />
+                </svg>
+                Demostración
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* MOOD EXPLORER */}
+      <section className="py-32 bg-background relative scroll-mt-24" id="descubrir">
+        <div className="max-w-7xl mx-auto px-6 md:px-12 lg:px-20 text-center mb-16">
+          <p className="text-primary text-[10px] uppercase tracking-[0.4em] font-bold mb-4">The Mood Explorer</p>
+          <h2 className="font-serif text-5xl font-light text-foreground tracking-tight">¿Qué atmósfera buscas hoy?</h2>
+          <p className="text-muted-foreground mt-4 max-w-xl mx-auto italic">Selecciona una emoción para comenzar tu descubrimiento curado.</p>
+        </div>
+
+        <div className="max-w-5xl mx-auto px-6 grid grid-cols-2 md:grid-cols-4 gap-4">
+          {MOODS.map((mood, idx) => (
+            <button 
+              key={mood.label}
+              className="group flex flex-col items-center justify-center p-8 rounded-[2rem] bg-card border border-border transition-all duration-500 hover:scale-[1.05] hover:editorial-shadow hover:border-primary/30 cursor-pointer"
+            >
+              <span className="text-primary mb-4 group-hover:scale-110 transition-transform duration-500">
+                <mood.icon className="w-10 h-10" strokeWidth={1.5} />
+              </span>
+              <span className="text-sm font-semibold tracking-wide text-foreground">{mood.label}</span>
+            </button>
+          ))}
+        </div>
+      </section>
+
+      {/* HOW IT WORKS — EDITORIAL LAYOUT */}
+      <section className="py-40 scroll-mt-24" id="actos">
+        <div className="max-w-7xl mx-auto px-6 md:px-12 lg:px-20">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-24 items-center">
+            
+            <div className="relative group">
+              <div className="aspect-square bg-secondary rounded-[3rem] overflow-hidden editorial-shadow relative z-10 transition-transform duration-700 group-hover:-translate-y-2">
+                <Image src="/DescribePhoto.png" alt="Library View" fill className="object-cover opacity-80" />
+                <div className="absolute inset-0 bg-primary/5" />
+              </div>
+              <div className="absolute -inset-4 bg-primary/10 rounded-[3rem] -z-10 rotate-3 group-hover:rotate-6 transition-transform duration-700" />
             </div>
 
-            {/* Social proof */}
-            <div className="flex items-center gap-6 pt-4 border-t border-[var(--border)]">
-              <div className="flex -space-x-2">
-                {["#2F7C7A", "#C98663", "#7a7068", "#2F2F33"].map((color, i) => (
-                  <div
-                    key={i}
-                    className="w-8 h-8 rounded-full border-2 border-[var(--cream)] flex items-center justify-center text-xs text-white font-medium"
-                    style={{ backgroundColor: color }}
-                  >
-                    {["A", "B", "C", "D"][i]}
+            <div className="flex flex-col gap-12">
+              <div className="flex flex-col gap-4">
+                <p className="text-primary text-[10px] uppercase tracking-[0.3em] font-bold italic">The Experience</p>
+                <h2 className="font-serif text-6xl font-light text-foreground leading-tight tracking-tight">
+                  Descubrimiento en <br /> tres actos
+                </h2>
+              </div>
+
+              <div className="flex flex-col gap-10">
+                {[
+                  { num: "01", label: "Define tu atmósfera", desc: "No buscamos por etiquetas, sino por sensaciones. Cuéntanos qué tipo de viaje emocional quieres emprender." },
+                  { num: "02", label: "Curación algorítmica", desc: "Nuestra IA analiza patrones narrativos y estéticos para encontrar obras que realmente conecten con tu sensibilidad." },
+                  { num: "03", label: "Inmersión literaria", desc: "Explora reseñas editoriales y detalles visuales de cada recomendación antes de decidir tu próxima historia." },
+                ].map((step, i) => (
+                  <div key={i} className="flex gap-8 group">
+                    <span className="font-serif text-3xl font-light italic text-primary/30 group-hover:text-primary transition-colors duration-500">{step.num}</span>
+                    <div className="flex flex-col gap-2">
+                      <h3 className="text-lg font-bold text-foreground tracking-wide">{step.label}</h3>
+                      <p className="text-muted-foreground text-sm leading-relaxed max-w-sm">{step.desc}</p>
+                    </div>
                   </div>
                 ))}
               </div>
-              <p className="text-sm text-[var(--muted-foreground)]">
-                <span className="font-semibold text-[var(--foreground)]">+2,400</span> lectores y
-                cinéfilos ya lo usan
-              </p>
-            </div>
-          </div>
 
-          {/* Right */}
-          <div className="relative">
-            <div className="relative w-full aspect-[4/5] rounded-3xl overflow-hidden shadow-2xl">
-              <Image
-                src="/hero-collage.jpg"
-                alt="Colección de libros y películas"
-                fill
-                className="object-cover"
-                priority
-              />
-              {/* Floating card 1 */}
-              <div className="absolute bottom-8 left-6 bg-[var(--warm-white)]/95 backdrop-blur-sm rounded-2xl p-4 shadow-xl flex items-center gap-3 max-w-52">
-                <div className="w-10 h-10 rounded-xl bg-[var(--teal)] flex items-center justify-center flex-shrink-0">
-                  <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
-                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                  </svg>
-                </div>
-                <div>
-                  <p className="text-xs font-semibold text-[var(--foreground)]">Recomendación perfecta</p>
-                  <p className="text-xs text-[var(--muted-foreground)]">98% de coincidencia</p>
-                </div>
-              </div>
-              {/* Floating card 2 */}
-              <div className="absolute top-8 right-6 bg-[var(--warm-white)]/95 backdrop-blur-sm rounded-2xl p-4 shadow-xl">
-                <p className="text-xs font-semibold text-[var(--foreground)] mb-1">Tu próxima lectura</p>
-                <p className="text-xs text-[var(--teal)] font-medium">El nombre del viento</p>
-                <p className="text-xs text-[var(--muted-foreground)]">Fantasía · Patrick Rothfuss</p>
-              </div>
+              <button 
+                onClick={onStart}
+                className="w-fit mt-4 px-10 py-5 rounded-full font-bold text-sm text-white bg-foreground hover:bg-primary transition-all duration-500 hover:editorial-shadow cursor-pointer"
+              >
+                Iniciar descubrimiento
+              </button>
             </div>
           </div>
         </div>
       </section>
 
-      {/* How it works */}
-      <section id="como-funciona" className="py-24 bg-[var(--beige)]">
-        <div className="max-w-7xl mx-auto px-8">
-          <div className="text-center mb-16">
-            <p className="text-xs uppercase tracking-widest text-[var(--terracotta)] font-medium mb-4">El proceso</p>
-            <h2 className="font-serif text-4xl font-bold text-[var(--foreground)] text-balance">
-              Tres pasos hacia tu próxima historia
+      {/* TICKER — EDITORIAL BRANDS */}
+      <section className="py-10 bg-secondary/30 border-y border-border overflow-hidden">
+        <div className="flex whitespace-nowrap animate-ticker">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <div key={i} className="flex items-center gap-20 px-10 flex-shrink-0">
+              {["Mubi Inspired", "✦", "Editorial Minimalism", "✦", "Cinematic Discovery", "✦", "Aesthetic Curation", "✦", "Modern Storytelling", "✦"].map((item, j) => (
+                <span key={j} className={`text-[10px] font-bold uppercase tracking-[0.3em] ${item === "✦" ? "text-primary/40" : "text-muted-foreground/60"}`}>{item}</span>
+              ))}
+            </div>
+          ))}
+        </div>
+        <style>{`
+          @keyframes ticker { from { transform: translateX(0) } to { transform: translateX(-50%) } }
+          .animate-ticker { animation: ticker 40s linear infinite; }
+        `}</style>
+      </section>
+
+      {/* FINAL CTA */}
+      <section className="py-40 bg-background relative overflow-hidden">
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-primary/5 rounded-full blur-[120px] -z-10" />
+        
+        <div className="max-w-4xl mx-auto px-6 text-center flex flex-col items-center gap-10">
+          <div className="flex flex-col gap-6">
+            <h2 className="font-serif text-6xl md:text-8xl font-light text-foreground tracking-tight leading-tight">
+              Encuentra tu próxima <br />
+              <span className="italic font-extralight text-primary">obsesión</span> literaria.
             </h2>
+            <p className="text-muted-foreground text-lg max-w-xl mx-auto italic">
+              Lumina es el puente entre tu curiosidad y las historias que definirán tu próxima temporada.
+            </p>
           </div>
-          <div className="grid grid-cols-3 gap-8">
-            {[
-              {
-                step: "01",
-                title: "Cuéntanos tus gustos",
-                desc: "Selecciona géneros, actores, autores y el estado de ánimo con el que quieres comenzar.",
-                icon: (
-                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                  </svg>
-                ),
-              },
-              {
-                step: "02",
-                title: "La IA los analiza",
-                desc: "Nuestro motor inteligente cruza tus preferencias con miles de títulos y te genera un perfil único.",
-                icon: (
-                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
-                  </svg>
-                ),
-              },
-              {
-                step: "03",
-                title: "Recibe tu lista",
-                desc: "Explora recomendaciones personalizadas de películas y libros, con el motivo exacto por el que te las sugerimos.",
-                icon: (
-                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-                  </svg>
-                ),
-              },
-            ].map((item) => (
-              <div key={item.step} className="bg-[var(--warm-white)] rounded-2xl p-8 shadow-sm hover:shadow-md transition-shadow">
-                <div className="flex items-start justify-between mb-6">
-                  <div className="w-12 h-12 rounded-xl bg-[var(--teal)]/10 flex items-center justify-center text-[var(--teal)]">
-                    {item.icon}
-                  </div>
-                  <span className="font-serif text-4xl font-bold text-[var(--border)]">{item.step}</span>
-                </div>
-                <h3 className="font-serif text-xl font-semibold text-[var(--foreground)] mb-3">{item.title}</h3>
-                <p className="text-sm text-[var(--muted-foreground)] leading-relaxed">{item.desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
 
-      {/* CTA Banner */}
-      <section className="py-24 max-w-7xl mx-auto px-8">
-        <div className="bg-[var(--teal)] rounded-3xl p-16 flex flex-col items-center text-center gap-6">
-          <p className="text-xs uppercase tracking-widest text-[var(--primary-foreground)]/70 font-medium">Empieza hoy</p>
-          <h2 className="font-serif text-4xl font-bold text-[var(--primary-foreground)] max-w-lg text-balance">
-            Tu próxima historia favorita está a un clic de distancia
-          </h2>
-          <p className="text-[var(--primary-foreground)]/80 max-w-md leading-relaxed">
-            Deja de perder tiempo buscando. Lumina lo hace por ti con inteligencia artificial.
-          </p>
-          <button
+          <button 
             onClick={onStart}
-            className="mt-2 px-8 py-4 rounded-full bg-[var(--warm-white)] text-[var(--teal)] font-semibold hover:bg-[var(--cream)] transition-colors shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200 cursor-pointer"
+            className="px-12 py-6 rounded-full font-bold text-sm text-white bg-foreground hover:bg-primary transition-all duration-500 hover:editorial-shadow cursor-pointer"
           >
-            Comenzar ahora — es gratis
+            Iniciar descubrimiento curado
           </button>
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="border-t border-[var(--border)] py-10 max-w-7xl mx-auto px-8 flex justify-between items-center">
-        <span className="font-serif text-xl font-bold text-[var(--teal)]">Lumina</span>
-        <p className="text-sm text-[var(--muted-foreground)]">© 2026 Lumina. Todos los derechos reservados.</p>
+      {/* FOOTER */}
+      <footer className="py-20 border-t border-border">
+        <div className="max-w-7xl mx-auto px-6 md:px-12 lg:px-20 flex flex-col md:flex-row items-center justify-between gap-10">
+          <div className="flex items-center gap-2">
+            <span className="font-serif text-3xl font-light italic text-foreground">Lumina</span>
+            <span className="w-1.5 h-1.5 rounded-full bg-primary/40" />
+          </div>
+          
+          <nav className="flex gap-10 text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+            <Link href="#" className="hover:text-primary transition-colors">Instagram</Link>
+            <Link href="#" className="hover:text-primary transition-colors">Journal</Link>
+            <Link href="#" className="hover:text-primary transition-colors">Privacy</Link>
+          </nav>
+
+          <p className="text-[10px] font-medium text-muted-foreground/50 tracking-widest uppercase">
+            © 2026 Lumina Studio. Curated Experience.
+          </p>
+        </div>
       </footer>
     </main>
   )

@@ -1,109 +1,110 @@
 "use client"
 
 import { useEffect, useState } from "react"
+import { Sparkles, LoaderCircle } from "lucide-react"
 
 const MESSAGES = [
-  "Analizando tus géneros favoritos...",
-  "Buscando coincidencias entre miles de títulos...",
-  "Evaluando tu estado de ánimo...",
-  "Aplicando el motor de recomendaciones...",
-  "Casi listo, preparando tu lista personalizada...",
+  "Iniciando curaduría editorial...",
+  "Analizando patrones de sensibilidad...",
+  "Consultando archivos cinematográficos...",
+  "Buscando resonancia literaria...",
+  "Preparando tu galería personalizada...",
 ]
 
 export function LoadingScreen() {
-
   const [messageIndex, setMessageIndex] = useState(0)
   const [progress, setProgress] = useState(0)
 
   useEffect(() => {
     const interval = setInterval(() => {
       setMessageIndex((i) => (i + 1) % MESSAGES.length)
-    }, 1100)
+    }, 2000)
     return () => clearInterval(interval)
   }, [])
 
   useEffect(() => {
     const progressInterval = setInterval(() => {
       setProgress((p) => {
-        if (p >= 95) return p; // Wait at 95% until parent switches
-        return p + 2
+        if (p >= 98) return p
+        return p + 1
       })
-    }, 100)
+    }, 80)
     return () => clearInterval(progressInterval)
   }, [])
 
-
   return (
-    <main className="min-h-screen bg-[var(--background)] flex flex-col items-center justify-center">
-      <div className="max-w-lg w-full mx-auto px-8 flex flex-col items-center text-center gap-10">
+    <main className="min-h-screen max-h-screen bg-background flex flex-col items-center justify-center relative overflow-hidden grain-subtle">
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-primary/5 rounded-full blur-[120px]" />
+      </div>
 
-        {/* Animated rings */}
-        <div className="relative w-32 h-32 flex items-center justify-center">
-          {/* Outer ring */}
-          <div className="absolute inset-0 rounded-full border-2 border-[var(--teal)]/20 animate-ping" style={{ animationDuration: "2s" }} />
-          <div className="absolute inset-3 rounded-full border-2 border-[var(--teal)]/30 animate-ping" style={{ animationDuration: "2.5s" }} />
-          {/* Main circle */}
-          <div className="relative w-20 h-20 rounded-full bg-[var(--teal)] flex items-center justify-center shadow-lg">
-            <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
-            </svg>
+      <div className="max-w-2xl w-full mx-auto px-4 sm:px-6 md:px-8 flex flex-col items-center text-center gap-8 sm:gap-12 md:gap-16 relative z-10 overflow-y-auto max-h-[calc(100vh-4rem)] py-8">
+        
+        {/* Animated Loader */}
+        <div className="relative">
+          <div className="w-32 h-32 rounded-full border-2 border-primary/10 flex items-center justify-center relative">
+            <LoaderCircle className="w-12 h-12 text-primary animate-spin-slow" />
+            <div 
+              className="absolute inset-0 rounded-full border-t-2 border-primary transition-all duration-300"
+              style={{ transform: `rotate(${progress * 3.6}deg)` }}
+            />
           </div>
-          {/* Orbiting dot */}
-          <div
-            className="absolute w-3 h-3 rounded-full bg-[var(--terracotta)] shadow-md"
-            style={{
-              top: "50%",
-              left: "50%",
-              transform: `translate(-50%, -50%) rotate(${progress * 3.6}deg) translateX(56px)`,
-              transition: "transform 0.06s linear",
-            }}
-          />
+          <div className="absolute -top-4 -right-4 w-10 h-10 rounded-full bg-card border border-border flex items-center justify-center editorial-shadow animate-bounce">
+            <Sparkles className="w-5 h-5 text-primary" />
+          </div>
         </div>
 
-        <div className="flex flex-col gap-3">
-          <h1 className="font-serif text-3xl font-bold text-[var(--foreground)]">
-            Estamos analizando tus gustos
-          </h1>
-          <p
-            key={messageIndex}
-            className="text-[var(--muted-foreground)] text-base transition-all duration-500 opacity-100 animate-pulse"
-            style={{ animationDuration: "2s" }}
-          >
-            {MESSAGES[messageIndex]}
-          </p>
+        <div className="flex flex-col gap-6">
+          <div className="flex flex-col gap-2">
+            <p className="text-primary text-[10px] font-bold uppercase tracking-[0.4em] animate-pulse">
+              Curating Stories
+            </p>
+            <h1 className="font-serif text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-light text-foreground tracking-tight leading-tight">
+              Creando tu <br /> 
+              <span className="italic font-extralight text-primary">atmósfera</span>
+            </h1>
+          </div>
+          
+          <div className="h-6 overflow-hidden">
+            <p key={messageIndex} className="text-muted-foreground text-sm italic font-medium animate-in slide-in-from-bottom-full duration-700">
+              {MESSAGES[messageIndex]}
+            </p>
+          </div>
         </div>
 
-        {/* Progress bar */}
-        <div className="w-full">
-          <div className="flex justify-between text-xs text-[var(--muted-foreground)] mb-2">
-            <span>Procesando</span>
-            <span>{progress}%</span>
-          </div>
-          <div className="h-2 rounded-full bg-[var(--beige)] overflow-hidden">
-            <div
-              className="h-full rounded-full bg-[var(--teal)] transition-all duration-100"
+        {/* Progress System */}
+        <div className="w-full max-w-sm flex flex-col gap-3 sm:gap-4">
+          <div className="h-1 w-full bg-secondary rounded-full overflow-hidden">
+            <div 
+              className="h-full bg-primary transition-all duration-500 ease-out"
               style={{ width: `${progress}%` }}
             />
           </div>
+          <div className="flex justify-between items-center text-[9px] font-bold uppercase tracking-[0.2em] text-muted-foreground/60">
+            <span>Procesamiento IA</span>
+            <span>{progress}%</span>
+          </div>
         </div>
 
-        {/* Features */}
-        <div className="grid grid-cols-3 gap-4 w-full">
-          {[
-            { label: "Géneros", icon: "🎭" },
-            { label: "Estado de ánimo", icon: "✨" },
-            { label: "Tipo de historia", icon: "📖" },
-          ].map((item) => (
-            <div
-              key={item.label}
-              className="bg-[var(--card)] rounded-2xl p-4 flex flex-col items-center gap-2 border border-[var(--border)] shadow-sm"
-            >
-              <span className="text-2xl">{item.icon}</span>
-              <span className="text-xs text-[var(--muted-foreground)]">{item.label}</span>
+        <div className="flex gap-12 pt-8">
+          {["Géneros", "Mood", "Narrativa"].map((item, i) => (
+            <div key={i} className="flex flex-col gap-2 items-center opacity-40">
+              <div className="w-1.5 h-1.5 rounded-full bg-primary" />
+              <span className="text-[9px] font-bold uppercase tracking-widest">{item}</span>
             </div>
           ))}
         </div>
       </div>
+
+      <style>{`
+        @keyframes spin-slow {
+          from { transform: rotate(0deg); }
+          to { transform: rotate(360deg); }
+        }
+        .animate-spin-slow {
+          animation: spin-slow 3s linear infinite;
+        }
+      `}</style>
     </main>
   )
 }

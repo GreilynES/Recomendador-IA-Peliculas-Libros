@@ -4,6 +4,8 @@ import { useState } from "react"
 import { cn } from "@/lib/utils"
 import type { Recommendation } from "@/lib/data"
 import type { Preferences } from "./preferences-form"
+import { ArrowLeft, Sparkles, Filter, Bookmark, Plus } from "lucide-react"
+import { DynamicIcon } from "./ui/dynamic-icon"
 
 type ResultsPageProps = {
   preferences: Preferences
@@ -34,211 +36,183 @@ export function ResultsPage({ preferences, recommendations, onViewDetail, onEdit
     return r.type === "book"
   })
 
-  const movies = filtered.filter((r) => r.type === "movie")
-  const books = filtered.filter((r) => r.type === "book")
-
   return (
-    <main className="min-h-screen bg-[var(--background)] pt-24 pb-20">
-      <div className="max-w-7xl mx-auto px-8">
+    <main className="min-h-screen bg-background pt-32 pb-40 relative grain-subtle">
+      <div className="max-w-7xl mx-auto px-6 md:px-12 lg:px-20 relative z-10">
 
-        {/* Header */}
-        <div className="mb-10">
-          <button
-            onClick={onEditPreferences}
-            className="flex items-center gap-2 text-sm text-[var(--muted-foreground)] hover:text-[var(--foreground)] transition-colors mb-6 cursor-pointer"
-          >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-            </svg>
-            Editar preferencias
-          </button>
-
-          <div className="flex items-start justify-between gap-8">
-            <div>
-              <p className="text-xs uppercase tracking-widest text-[var(--terracotta)] font-medium mb-3">Tus recomendaciones</p>
-              <h1 className="font-serif text-4xl font-bold text-[var(--foreground)] text-balance">
-                {recommendations.length} títulos seleccionados para ti
-              </h1>
-              {/* Preference pills */}
-              <div className="flex flex-wrap gap-2 mt-4">
-                {preferences.genres.slice(0, 4).map((g) => (
-                  <span key={g} className="px-3 py-1 rounded-full bg-[var(--teal)]/10 text-[var(--teal)] text-xs font-medium">{g}</span>
-                ))}
-                {preferences.mood && (
-                  <span className="px-3 py-1 rounded-full bg-[var(--terracotta)]/10 text-[var(--terracotta)] text-xs font-medium">{preferences.mood}</span>
-                )}
-                {preferences.storyType && (
-                  <span className="px-3 py-1 rounded-full bg-[var(--beige)] text-[var(--muted-foreground)] text-xs font-medium">{preferences.storyType}</span>
-                )}
-              </div>
-            </div>
+        {/* Header Section */}
+        <div className="mb-20 flex flex-col md:flex-row md:items-end justify-between gap-10">
+          <div className="flex flex-col gap-6 max-w-3xl">
             <button
-              onClick={onNewSearch}
-              className="flex-shrink-0 px-6 py-3 rounded-full bg-[var(--teal)] text-white text-sm font-medium hover:bg-[var(--teal-dark)] transition-colors shadow-md cursor-pointer"
+              onClick={onEditPreferences}
+              className="group flex items-center gap-3 text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground hover:text-primary transition-all cursor-pointer w-fit"
             >
-              Nueva búsqueda
+              <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
+              Ajustar sensibilidad
             </button>
+            
+            <div className="flex flex-col gap-4">
+              <p className="text-primary font-bold tracking-[0.3em] uppercase text-[10px]">
+                Curated Gallery
+              </p>
+              <h1 className="font-serif text-6xl md:text-8xl font-light text-foreground tracking-tight leading-[1.05]">
+                Tus historias <br />
+                <span className="italic font-extralight text-primary">encontradas</span>
+              </h1>
+            </div>
+
+            <div className="flex flex-wrap gap-2 mt-2">
+              {preferences.genres.map((g) => (
+                <span key={g} className="px-4 py-2 rounded-full bg-card border border-border text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
+                  {g}
+                </span>
+              ))}
+              <span className="px-4 py-2 rounded-full bg-primary/10 border border-primary/20 text-[10px] font-bold text-primary uppercase tracking-widest italic">
+                {preferences.mood}
+              </span>
+            </div>
           </div>
 
-          {/* Filter tabs */}
-          <div className="flex gap-2 mt-8 border-b border-[var(--border)] pb-0">
+          <button
+            onClick={onNewSearch}
+            className="flex-shrink-0 px-10 py-5 rounded-full text-xs font-bold uppercase tracking-widest bg-foreground text-white hover:bg-primary transition-all duration-500 hover:editorial-shadow cursor-pointer"
+          >
+            Nueva Búsqueda
+          </button>
+        </div>
+
+        {/* Filter Bar */}
+        <div className="mb-16 flex items-center justify-between border-b border-border pb-8">
+          <div className="flex gap-10">
             {(["all", "movies", "books"] as const).map((f) => (
               <button
                 key={f}
                 onClick={() => setFilter(f)}
                 className={cn(
-                  "px-5 py-3 text-sm font-medium border-b-2 transition-all cursor-pointer -mb-px",
-                  filter === f
-                    ? "border-[var(--teal)] text-[var(--teal)]"
-                    : "border-transparent text-[var(--muted-foreground)] hover:text-[var(--foreground)]"
+                  "relative py-2 text-[10px] font-bold uppercase tracking-[0.25em] transition-all duration-500 cursor-pointer",
+                  filter === f ? "text-primary" : "text-muted-foreground hover:text-foreground"
                 )}
               >
-                {f === "all" ? "Todo" : f === "movies" ? `Películas (${recommendations.filter(r => r.type === "movie").length})` : `Libros (${recommendations.filter(r => r.type === "book").length})`}
+                {f === "all" ? "Todo" : f === "movies" ? "Películas" : "Libros"}
+                {filter === f && (
+                  <div className="absolute -bottom-8 left-0 right-0 h-1 bg-primary rounded-full animate-in fade-in zoom-in duration-500" />
+                )}
               </button>
             ))}
           </div>
+          
+          <div className="flex items-center gap-2 text-muted-foreground/40 italic text-sm">
+            <Sparkles className="w-4 h-4" />
+            <span>{filtered.length} resultados curados</span>
+          </div>
         </div>
 
-        {/* Movies section */}
-        {(filter === "all" || filter === "movies") && movies.length > 0 && (
-          <section className="mb-14">
-            {filter === "all" && (
-              <div className="flex items-center gap-3 mb-6">
-                <div className="w-8 h-8 rounded-lg bg-[var(--teal)]/10 flex items-center justify-center">
-                  <svg className="w-4 h-4 text-[var(--teal)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 4v16M17 4v16M3 8h4m10 0h4M3 12h18M3 16h4m10 0h4M4 20h16a1 1 0 001-1V5a1 1 0 00-1-1H4a1 1 0 00-1 1v14a1 1 0 001 1z" />
-                  </svg>
-                </div>
-                <h2 className="font-serif text-2xl font-semibold text-[var(--foreground)]">Películas</h2>
-              </div>
-            )}
-            <div className="grid grid-cols-4 gap-5">
-              {movies.map((rec) => (
-                <RecommendationCard
-                  key={rec.id}
-                  rec={rec}
-                  isFavorite={favorites.has(rec.id)}
-                  onToggleFavorite={(e) => toggleFavorite(rec.id, e)}
-                  onClick={() => onViewDetail(rec)}
-                />
-              ))}
-            </div>
-          </section>
-        )}
-
-        {/* Books section */}
-        {(filter === "all" || filter === "books") && books.length > 0 && (
-          <section>
-            {filter === "all" && (
-              <div className="flex items-center gap-3 mb-6">
-                <div className="w-8 h-8 rounded-lg bg-[var(--terracotta)]/10 flex items-center justify-center">
-                  <svg className="w-4 h-4 text-[var(--terracotta)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-                  </svg>
-                </div>
-                <h2 className="font-serif text-2xl font-semibold text-[var(--foreground)]">Libros</h2>
-              </div>
-            )}
-            <div className="grid grid-cols-4 gap-5">
-              {books.map((rec) => (
-                <RecommendationCard
-                  key={rec.id}
-                  rec={rec}
-                  isFavorite={favorites.has(rec.id)}
-                  onToggleFavorite={(e) => toggleFavorite(rec.id, e)}
-                  onClick={() => onViewDetail(rec)}
-                />
-              ))}
-            </div>
-          </section>
-        )}
+        {/* Grid Layout — Pinterest / Mubi Style */}
+        <div className="columns-1 md:columns-2 lg:columns-3 gap-8 space-y-8">
+          {filtered.map((rec, idx) => (
+            <RecommendationCard
+              key={rec.id}
+              rec={rec}
+              isFavorite={favorites.has(rec.id)}
+              onToggleFavorite={(e) => toggleFavorite(rec.id, e)}
+              onClick={() => onViewDetail(rec)}
+              priority={idx < 3}
+            />
+          ))}
+        </div>
       </div>
     </main>
   )
 }
 
-type CardProps = {
-  rec: Recommendation
-  isFavorite: boolean
-  onToggleFavorite: (e: React.MouseEvent) => void
-  onClick: () => void
-}
-
-function RecommendationCard({ rec, isFavorite, onToggleFavorite, onClick }: CardProps) {
+export function RecommendationCard({ rec, isFavorite, onToggleFavorite, onClick, priority }: { 
+  rec: Recommendation; 
+  isFavorite: boolean; 
+  onToggleFavorite: (e: React.MouseEvent) => void; 
+  onClick: () => void;
+  priority?: boolean;
+}) {
   return (
     <article
       onClick={onClick}
-      className="group bg-[var(--card)] rounded-2xl overflow-hidden shadow-sm border border-[var(--border)] hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer"
+      className="break-inside-avoid group relative bg-card rounded-[2.5rem] border border-border overflow-hidden transition-all duration-700 cursor-pointer hover:editorial-shadow hover:border-primary/20 hover:-translate-y-2 animate-in fade-in slide-in-from-bottom-10 duration-1000"
     >
-      {/* Poster */}
-      <div className="relative aspect-[2/3] overflow-hidden bg-[var(--beige)]">
+      {/* Visual Header */}
+      <div className={cn("relative overflow-hidden", rec.type === "movie" ? "aspect-[16/9]" : "aspect-[3/4]")}>
         {rec.imageUrl ? (
           <img 
             src={rec.imageUrl} 
             alt={rec.title}
-            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+            className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
           />
         ) : (
           <div
-            className="absolute inset-0 flex items-center justify-center"
+            className="w-full h-full flex items-center justify-center"
             style={{ background: rec.color }}
           >
-            <span className="text-5xl">{rec.emoji}</span>
+            <DynamicIcon 
+              name={rec.emoji} 
+              className="w-24 h-24 text-white/80 group-hover:scale-110 transition-transform duration-700" 
+              strokeWidth={1}
+            />
           </div>
         )}
-        {/* Type badge */}
-        <div className="absolute top-3 left-3">
-          <span className={cn(
-            "px-2.5 py-1 rounded-full text-xs font-medium",
-            rec.type === "movie" ? "bg-[var(--teal)] text-white" : "bg-[var(--terracotta)] text-white"
-          )}>
+        
+        {/* Overlay Badges */}
+        <div className="absolute inset-x-6 top-6 flex justify-between items-start opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+          <span className="px-4 py-2 rounded-full bg-white/80 backdrop-blur-md text-[9px] font-bold uppercase tracking-widest text-foreground border border-white/20">
             {rec.type === "movie" ? "Película" : "Libro"}
           </span>
+          
+          <button
+            onClick={onToggleFavorite}
+            className={cn(
+              "w-10 h-10 rounded-full flex items-center justify-center transition-all duration-500 cursor-pointer border",
+              isFavorite 
+                ? "bg-primary text-white border-primary" 
+                : "bg-white/80 backdrop-blur-md text-foreground border-white/20 hover:bg-primary hover:text-white hover:border-primary"
+            )}
+          >
+            <Bookmark className={cn("w-4 h-4 transition-transform duration-500", isFavorite ? "scale-110 fill-current" : "group-hover/btn:scale-110")} />
+          </button>
         </div>
-        {/* Favorite button */}
-        <button
-          onClick={onToggleFavorite}
-          className={cn(
-            "absolute top-3 right-3 w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 cursor-pointer",
-            isFavorite
-              ? "bg-[var(--terracotta)] text-white"
-              : "bg-black/20 text-white hover:bg-black/40 backdrop-blur-sm"
-          )}
-          aria-label={isFavorite ? "Quitar de favoritos" : "Guardar en favoritos"}
-        >
-          <svg className="w-4 h-4" fill={isFavorite ? "currentColor" : "none"} stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-          </svg>
-        </button>
       </div>
 
-      {/* Content */}
-      <div className="p-5 flex flex-col gap-3">
-        <div>
-          <p className="text-xs text-[var(--muted-foreground)] mb-1">{rec.genre}</p>
-          <h3 className="font-serif text-base font-bold text-[var(--foreground)] leading-snug group-hover:text-[var(--teal)] transition-colors">
+      {/* Content Section */}
+      <div className="p-8 md:p-10 flex flex-col gap-6">
+        <div className="flex flex-col gap-3">
+          <div className="flex items-center gap-3">
+            <span className="text-primary text-[10px] font-bold uppercase tracking-[0.25em]">{rec.genre}</span>
+            <div className="w-1 h-1 rounded-full bg-border" />
+            <span className="text-muted-foreground text-[10px] font-medium tracking-widest uppercase">{rec.meta}</span>
+          </div>
+          
+          <h3 className="font-serif text-3xl font-light text-foreground leading-tight group-hover:text-primary transition-colors duration-500">
             {rec.title}
           </h3>
-          <p className="text-xs text-[var(--muted-foreground)] mt-0.5">{rec.meta}</p>
-        </div>
-        <p className="text-xs text-[var(--muted-foreground)] leading-relaxed line-clamp-2">{rec.description}</p>
-
-        {/* Reason */}
-        <div className="rounded-xl bg-[var(--teal)]/5 border border-[var(--teal)]/10 px-3 py-2">
-          <p className="text-xs text-[var(--teal)] leading-relaxed">
-            <span className="font-semibold">Por qué te lo recomendamos:</span> {rec.reason}
-          </p>
         </div>
 
-        <div className="flex gap-2 mt-1">
-          <button className="flex-1 py-2 rounded-full bg-[var(--teal)] text-white text-xs font-medium hover:bg-[var(--teal-dark)] transition-colors cursor-pointer">
-            Ver más
-          </button>
-          <button className="px-3 py-2 rounded-full border border-[var(--border)] text-[var(--muted-foreground)] text-xs hover:bg-[var(--beige)] transition-colors cursor-pointer">
-            Info
+        <p className="text-muted-foreground text-sm leading-relaxed italic line-clamp-3">
+          {rec.description}
+        </p>
+
+        {/* Curation Note */}
+        <div className="pt-6 border-t border-border flex flex-col gap-4">
+          <div className="flex items-start gap-4">
+            <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0 mt-1">
+              <Sparkles className="w-3.5 h-3.5 text-primary" />
+            </div>
+            <p className="text-xs text-muted-foreground leading-relaxed">
+              <span className="font-bold text-foreground tracking-tight">Nota Editorial:</span> {rec.reason}
+            </p>
+          </div>
+          
+          <button className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.3em] text-primary hover:text-foreground transition-all duration-500 group/btn">
+            Ver detalles del acto
+            <Plus className="w-3 h-3 group-hover/btn:rotate-90 transition-transform" />
           </button>
         </div>
       </div>
     </article>
   )
-}
+}

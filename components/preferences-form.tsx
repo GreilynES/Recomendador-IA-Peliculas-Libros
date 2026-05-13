@@ -2,7 +2,20 @@
 
 import { useState } from "react"
 import { cn } from "@/lib/utils"
-import { Clock, Info } from "lucide-react"
+import { 
+  Clock, 
+  Info, 
+  ArrowLeft, 
+  Trash2, 
+  Sparkles, 
+  Laugh, 
+  CloudRain, 
+  Brain, 
+  Moon, 
+  Zap, 
+  Clapperboard, 
+  Book 
+} from "lucide-react"
 import { AuthModal } from "./auth-modal"
 
 export type Preferences = {
@@ -41,9 +54,16 @@ const GENRES = [
   "Aventura", "Fantasía", "Misterio", "Histórico", "Documental", "Acción",
 ]
 
-const STORY_TYPES = ["Épico", "Íntimo", "Rápido y tenso", "Reflexivo", "Oscuro", "Esperanzador"]
+const STORY_TYPES = ["Épico", "Íntimo", "Dinámico", "Reflexivo", "Oscuro", "Esperanzador"]
 
-const MOODS = ["Quiero reír", "Quiero llorar", "Quiero pensar", "Quiero escapar", "Quiero inspirarme", "Quiero emoción"]
+const MOODS = [
+  { label: "Quiero reír", icon: Laugh },
+  { label: "Quiero llorar", icon: CloudRain },
+  { label: "Quiero pensar", icon: Brain },
+  { label: "Quiero escapar", icon: Moon },
+  { label: "Quiero inspirarme", icon: Sparkles },
+  { label: "Quiero emoción", icon: Zap },
+]
 
 export function PreferencesForm({
   onSubmit,
@@ -89,60 +109,60 @@ export function PreferencesForm({
 
   const getHistoryResults = (resultado: unknown) => {
     if (!Array.isArray(resultado)) return []
-
     return resultado.filter((item): item is HistoryResult => {
       return typeof item === "object" && item !== null && "title" in item
     })
   }
 
   return (
-    <main className="min-h-screen bg-[var(--background)] pt-24 pb-20">
-      <div className="max-w-5xl mx-auto px-8">
-        <div className="mb-12">
+    <main className="min-h-screen bg-background pt-32 pb-40 relative">
+      <div className="max-w-6xl mx-auto px-6 md:px-12 relative z-10">
+        
+        {/* Header Section */}
+        <div className="mb-20">
           <button
             onClick={onBack}
-            className="flex items-center gap-2 text-sm text-[var(--muted-foreground)] hover:text-[var(--foreground)] transition-colors mb-6 cursor-pointer"
+            className="group flex items-center gap-3 text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground hover:text-primary transition-all mb-10 cursor-pointer"
           >
-            ← Volver
+            <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
+            Volver al inicio
           </button>
 
-          <p className="text-xs uppercase tracking-widest text-[var(--terracotta)] font-medium mb-3">
-            Paso 1 de 1
-          </p>
-
-          <h1 className="font-serif text-4xl font-bold text-[var(--foreground)] text-balance">
-            Cuéntanos tus preferencias
-          </h1>
-
-          <p className="mt-3 text-[var(--muted-foreground)] leading-relaxed max-w-xl">
-            Mientras más nos cuentes, más precisas serán tus recomendaciones.
-          </p>
+          <div className="flex flex-col gap-6 max-w-3xl">
+            <h1 className="font-serif text-6xl md:text-8xl font-light text-foreground tracking-tight leading-[1.1]">
+              Tu Sensibilidad <br />
+              <span className="italic font-extralight text-primary">Cinematográfica</span>
+            </h1>
+            <p className="text-muted-foreground text-lg leading-relaxed max-w-xl italic">
+              Cuéntanos sobre tu atmósfera ideal. Lumina creará un perfil único para curar historias que resuenen con tu momento actual.
+            </p>
+          </div>
 
           {!isLoggedIn && (
-            <div className="mt-8 p-4 bg-[var(--teal)]/5 border border-[var(--teal)]/20 rounded-2xl flex items-center gap-4 animate-in fade-in slide-in-from-top-4 duration-700">
-              <div className="w-10 h-10 rounded-full bg-[var(--teal)]/10 flex items-center justify-center flex-shrink-0">
-                <Info className="w-5 h-5 text-[var(--teal)]" />
+            <div className="mt-12 p-8 bg-card border border-border rounded-[2.5rem] flex flex-col md:flex-row items-center gap-8 editorial-shadow animate-in fade-in slide-in-from-top-6 duration-1000">
+              <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center flex-shrink-0">
+                <Sparkles className="w-7 h-7 text-primary" />
               </div>
-              <div className="flex-1">
-                <p className="text-sm text-[var(--foreground)] font-medium">
-                  ¿Quieres guardar tus recomendaciones?
+              <div className="flex-1 text-center md:text-left">
+                <p className="text-lg font-bold text-foreground tracking-tight">
+                  ¿Deseas guardar tus descubrimientos?
                 </p>
-                <p className="text-xs text-[var(--muted-foreground)] mt-0.5">
-                  Registrate o inicia sesión para tener un historial personalizado de tus preferencias.
+                <p className="text-muted-foreground text-sm mt-1">
+                  Únete a Lumina para mantener un historial de tus recomendaciones y preferencias curadas.
                 </p>
               </div>
-              <div className="flex gap-2">
+              <div className="flex gap-4">
                 <button 
                   onClick={() => setAuthModal({ isOpen: true, mode: "login" })}
-                  className="px-4 py-2 text-xs font-bold text-[var(--teal)] hover:bg-[var(--teal)]/10 rounded-full transition-colors cursor-pointer"
+                  className="px-8 py-3.5 text-xs font-bold uppercase tracking-widest text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
                 >
-                  Iniciar sesión
+                  Log in
                 </button>
                 <button 
                   onClick={() => setAuthModal({ isOpen: true, mode: "register" })}
-                  className="px-4 py-2 text-xs font-bold bg-[var(--teal)] text-white rounded-full hover:bg-[var(--teal-dark)] transition-all shadow-sm cursor-pointer"
+                  className="px-8 py-3.5 text-xs font-bold uppercase tracking-widest bg-primary text-white rounded-full hover:editorial-shadow transition-all cursor-pointer"
                 >
-                  Registrarse
+                  Join
                 </button>
               </div>
             </div>
@@ -155,29 +175,25 @@ export function PreferencesForm({
           initialMode={authModal.mode}
         />
 
-        <div className="grid grid-cols-3 gap-8">
-          <div className="col-span-2 flex flex-col gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-16">
+          <div className="lg:col-span-8 flex flex-col gap-12">
 
-
-            <section className="bg-[var(--card)] rounded-2xl p-8 shadow-sm border border-[var(--border)]">
-              <h2 className="font-serif text-xl font-semibold text-[var(--foreground)] mb-2">
-                Géneros favoritos
-              </h2>
-
-              <p className="text-sm text-[var(--muted-foreground)] mb-5">
-                Selecciona todos los que te interesen.
-              </p>
-
-              <div className="flex flex-wrap gap-2">
+            {/* Géneros */}
+            <section className="bg-card rounded-[2.5rem] p-10 md:p-14 border border-border editorial-shadow">
+              <div className="flex flex-col gap-2 mb-10">
+                <p className="text-primary text-[10px] font-bold uppercase tracking-[0.3em]">01. Acto Primero</p>
+                <h2 className="font-serif text-3xl font-light text-foreground">Géneros Favoritos</h2>
+              </div>
+              <div className="flex flex-wrap gap-3">
                 {GENRES.map((g) => (
                   <button
                     key={g}
                     onClick={() => toggleGenre(g)}
                     className={cn(
-                      "px-4 py-2 rounded-full text-sm font-medium border transition-all duration-150 cursor-pointer",
-                      prefs.genres.includes(g)
-                        ? "bg-[var(--teal)] text-[var(--primary-foreground)] border-[var(--teal)] shadow-sm"
-                        : "bg-transparent text-[var(--foreground)] border-[var(--border)] hover:bg-[var(--beige)] hover:border-[var(--teal)]/30"
+                      "px-6 py-3 rounded-full text-xs font-bold tracking-wider transition-all duration-500 cursor-pointer border",
+                      prefs.genres.includes(g) 
+                        ? "bg-primary text-white border-primary editorial-shadow scale-[1.05]" 
+                        : "bg-background text-muted-foreground border-border hover:border-primary/40 hover:text-foreground"
                     )}
                   >
                     {g}
@@ -186,69 +202,52 @@ export function PreferencesForm({
               </div>
             </section>
 
-            <section className="bg-[var(--card)] rounded-2xl p-8 shadow-sm border border-[var(--border)]">
-              <div className="grid grid-cols-2 gap-6">
-                <div>
-                  <label className="block font-serif text-base font-semibold text-[var(--foreground)] mb-1">
-                    Actores favoritos
-                  </label>
-
-                  <p className="text-xs text-[var(--muted-foreground)] mb-3">
-                    Para recomendaciones de películas
-                  </p>
-
+            {/* Actores / Autores */}
+            <section className="bg-card rounded-[2.5rem] p-10 md:p-14 border border-border editorial-shadow">
+              <div className="flex flex-col gap-2 mb-10">
+                <p className="text-primary text-[10px] font-bold uppercase tracking-[0.3em]">02. Acto Segundo</p>
+                <h2 className="font-serif text-3xl font-light text-foreground">Referencias Visuales</h2>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+                <div className="flex flex-col gap-4">
+                  <label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground ml-2">Actores de Interés</label>
                   <input
                     type="text"
-                    placeholder="Ej: Cate Blanchett, Timothée Chalamet"
+                    placeholder="Ej: Cate Blanchett, Tilda Swinton"
                     value={prefs.movieActors}
-                    onChange={(e) =>
-                      setPrefs((p) => ({ ...p, movieActors: e.target.value }))
-                    }
-                    className="w-full px-4 py-3 rounded-xl bg-[var(--background)] border border-[var(--border)] text-sm text-[var(--foreground)] placeholder:text-[var(--muted-foreground)] focus:outline-none focus:ring-2 focus:ring-[var(--teal)] focus:border-transparent transition-all"
+                    onChange={(e) => setPrefs((p) => ({ ...p, movieActors: e.target.value }))}
+                    className="w-full px-8 py-5 text-sm bg-background border border-border rounded-2xl focus:outline-none focus:border-primary/50 focus:editorial-shadow transition-all duration-500 placeholder:italic placeholder:opacity-40"
                   />
                 </div>
-
-                <div>
-                  <label className="block font-serif text-base font-semibold text-[var(--foreground)] mb-1">
-                    Autores favoritos
-                  </label>
-
-                  <p className="text-xs text-[var(--muted-foreground)] mb-3">
-                    Para recomendaciones de libros
-                  </p>
-
+                <div className="flex flex-col gap-4">
+                  <label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground ml-2">Autores de Interés</label>
                   <input
                     type="text"
-                    placeholder="Ej: García Márquez, Donna Tartt"
+                    placeholder="Ej: Joan Didion, Murakami"
                     value={prefs.bookAuthors}
-                    onChange={(e) =>
-                      setPrefs((p) => ({ ...p, bookAuthors: e.target.value }))
-                    }
-                    className="w-full px-4 py-3 rounded-xl bg-[var(--background)] border border-[var(--border)] text-sm text-[var(--foreground)] placeholder:text-[var(--muted-foreground)] focus:outline-none focus:ring-2 focus:ring-[var(--teal)] focus:border-transparent transition-all"
+                    onChange={(e) => setPrefs((p) => ({ ...p, bookAuthors: e.target.value }))}
+                    className="w-full px-8 py-5 text-sm bg-background border border-border rounded-2xl focus:outline-none focus:border-primary/50 focus:editorial-shadow transition-all duration-500 placeholder:italic placeholder:opacity-40"
                   />
                 </div>
               </div>
             </section>
 
-            <section className="bg-[var(--card)] rounded-2xl p-8 shadow-sm border border-[var(--border)]">
-              <h2 className="font-serif text-xl font-semibold text-[var(--foreground)] mb-2">
-                Tipo de historia
-              </h2>
-
-              <p className="text-sm text-[var(--muted-foreground)] mb-5">
-                ¿Qué tipo de narrativa prefieres ahora?
-              </p>
-
-              <div className="grid grid-cols-3 gap-3">
+            {/* Tipo de historia */}
+            <section className="bg-card rounded-[2.5rem] p-10 md:p-14 border border-border editorial-shadow">
+              <div className="flex flex-col gap-2 mb-10">
+                <p className="text-primary text-[10px] font-bold uppercase tracking-[0.3em]">03. Acto Tercero</p>
+                <h2 className="font-serif text-3xl font-light text-foreground">Narrativa Ideal</h2>
+              </div>
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                 {STORY_TYPES.map((t) => (
                   <button
                     key={t}
                     onClick={() => setPrefs((p) => ({ ...p, storyType: t }))}
                     className={cn(
-                      "px-4 py-3 rounded-xl text-sm font-medium border text-center transition-all duration-150 cursor-pointer",
-                      prefs.storyType === t
-                        ? "bg-[var(--terracotta)] text-white border-[var(--terracotta)] shadow-sm"
-                        : "bg-transparent text-[var(--foreground)] border-[var(--border)] hover:bg-[var(--beige)] hover:border-[var(--terracotta)]/30"
+                      "px-4 py-5 rounded-2xl text-xs font-bold tracking-widest transition-all duration-500 cursor-pointer border",
+                      prefs.storyType === t 
+                        ? "bg-primary text-white border-primary editorial-shadow" 
+                        : "bg-background text-muted-foreground border-border hover:border-primary/30"
                     )}
                   >
                     {t}
@@ -257,245 +256,158 @@ export function PreferencesForm({
               </div>
             </section>
 
-            <section className="bg-[var(--card)] rounded-2xl p-8 shadow-sm border border-[var(--border)]">
-              <h2 className="font-serif text-xl font-semibold text-[var(--foreground)] mb-2">
-                Estado de ánimo
-              </h2>
-
-              <p className="text-sm text-[var(--muted-foreground)] mb-5">
-                ¿Cómo te sientes hoy?
-              </p>
-
-              <div className="grid grid-cols-3 gap-3">
+            {/* Estado emocional */}
+            <section className="bg-primary/5 rounded-[3rem] p-10 md:p-14 border border-primary/20 editorial-shadow relative overflow-hidden">
+              <div className="absolute -top-10 -right-10 w-40 h-40 bg-primary/10 rounded-full blur-3xl" />
+              <div className="flex flex-col gap-2 mb-10 relative z-10">
+                <p className="text-primary text-[10px] font-bold uppercase tracking-[0.3em]">El Corazón de Lumina</p>
+                <h2 className="font-serif text-4xl font-light text-foreground">Atmósfera Actual</h2>
+              </div>
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-4 relative z-10">
                 {MOODS.map((m) => (
                   <button
-                    key={m}
-                    onClick={() => setPrefs((p) => ({ ...p, mood: m }))}
+                    key={m.label}
+                    onClick={() => setPrefs((p) => ({ ...p, mood: m.label }))}
                     className={cn(
-                      "px-4 py-3 rounded-xl text-sm font-medium border text-center transition-all duration-150 cursor-pointer",
-                      prefs.mood === m
-                        ? "bg-[var(--teal)] text-white border-[var(--teal)] shadow-sm"
-                        : "bg-transparent text-[var(--foreground)] border-[var(--border)] hover:bg-[var(--beige)]"
+                      "group flex flex-col items-center justify-center gap-4 px-6 py-8 rounded-[2rem] text-xs font-bold tracking-widest transition-all duration-700 cursor-pointer border",
+                      prefs.mood === m.label 
+                        ? "bg-white text-primary border-primary/30 editorial-shadow scale-[1.03]" 
+                        : "bg-white/40 text-muted-foreground border-transparent hover:bg-white hover:border-primary/20"
                     )}
                   >
-                    {m}
+                    <span className={cn("transition-transform duration-500", prefs.mood === m.label ? "scale-110 text-primary" : "group-hover:scale-110 text-muted-foreground/60")}>
+                      <m.icon className="w-10 h-10" strokeWidth={1.5} />
+                    </span>
+                    <span className="text-center">{m.label}</span>
                   </button>
                 ))}
               </div>
             </section>
 
-            <section className="bg-[var(--card)] rounded-2xl p-8 shadow-sm border border-[var(--border)]">
-              <h2 className="font-serif text-xl font-semibold text-[var(--foreground)] mb-2">
-                ¿Qué quieres?
-              </h2>
-
-              <p className="text-sm text-[var(--muted-foreground)] mb-5">
-                Elige el tipo de recomendaciones que deseas recibir.
-              </p>
-
-              <div className="flex gap-3">
+            {/* Media type */}
+            <section className="bg-card rounded-[2.5rem] p-10 md:p-14 border border-border editorial-shadow">
+              <div className="flex flex-col gap-2 mb-10">
+                <p className="text-primary text-[10px] font-bold uppercase tracking-[0.3em]">04. Formato</p>
+                <h2 className="font-serif text-3xl font-light text-foreground">¿Qué historias buscas?</h2>
+              </div>
+              <div className="flex flex-col md:flex-row gap-6">
                 {(["both", "movies", "books"] as const).map((type) => (
                   <button
                     key={type}
                     onClick={() => setPrefs((p) => ({ ...p, mediaType: type }))}
                     className={cn(
-                      "flex-1 py-4 rounded-xl text-sm font-medium border transition-all duration-150 cursor-pointer flex flex-col items-center gap-2",
-                      prefs.mediaType === type
-                        ? "bg-[var(--teal)] text-white border-[var(--teal)] shadow-sm"
-                        : "bg-transparent text-[var(--foreground)] border-[var(--border)] hover:bg-[var(--beige)]"
+                      "flex-1 py-10 rounded-[2rem] flex flex-col items-center gap-4 transition-all duration-700 cursor-pointer border",
+                      prefs.mediaType === type 
+                        ? "bg-primary text-white border-primary editorial-shadow" 
+                        : "bg-background text-muted-foreground border-border hover:border-primary/20"
                     )}
                   >
-                    <span className="text-xl">
-                      {type === "both" ? "🎬📚" : type === "movies" ? "🎬" : "📚"}
+                    <span className="flex gap-2">
+                      {type === "both" ? (
+                        <>
+                          <Clapperboard className="w-8 h-8" strokeWidth={1.5} />
+                          <Book className="w-8 h-8" strokeWidth={1.5} />
+                        </>
+                      ) : type === "movies" ? (
+                        <Clapperboard className="w-8 h-8" strokeWidth={1.5} />
+                      ) : (
+                        <Book className="w-8 h-8" strokeWidth={1.5} />
+                      )}
                     </span>
-                    <span>
-                      {type === "both"
-                        ? "Películas y libros"
-                        : type === "movies"
-                          ? "Solo películas"
-                          : "Solo libros"}
+                    <span className="text-[10px] font-bold uppercase tracking-[0.2em]">
+                      {type === "both" ? "Ambos" : type === "movies" ? "Películas" : "Libros"}
                     </span>
                   </button>
                 ))}
               </div>
-
             </section>
-
-            {isLoggedIn && (
-              <section className="bg-[var(--card)] rounded-2xl p-8 shadow-sm border border-[var(--border)]">
-                <div className="flex items-center gap-3 mb-5">
-                  <Clock className="w-5 h-5 text-[var(--teal)]" />
-                  <h2 className="font-serif text-xl font-semibold text-[var(--foreground)]">
-                    Historial guardado
-                  </h2>
-                </div>
-
-                {isHistoryLoading ? (
-                  <p className="text-sm text-[var(--muted-foreground)]">
-                    Cargando tu historial...
-                  </p>
-                ) : history.length > 0 ? (
-                  <div className="flex flex-col gap-4">
-                    {history.map((item) => {
-                      const results = getHistoryResults(item.resultado)
-
-                      return (
-                        <article
-                          key={item.id}
-                          className="rounded-xl border border-[var(--border)] bg-[var(--background)] p-5"
-                        >
-                          <div className="flex items-start justify-between gap-4 mb-2">
-                            <span className="text-xs font-semibold uppercase tracking-wider text-[var(--teal)]">
-                              {item.tipo_recomendacion}
-                            </span>
-                            {results.length > 0 && (
-                              <span className="text-xs text-[var(--muted-foreground)] whitespace-nowrap">
-                                {results.length} resultados
-                              </span>
-                            )}
-                          </div>
-
-                          <p className="text-sm text-[var(--foreground)] leading-relaxed">
-                            {item.consulta}
-                          </p>
-
-                          {results.length > 0 && (
-                            <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-2">
-                              {results.map((result, index) => (
-                                <div
-                                  key={result.id ?? `${item.id}-${index}`}
-                                  className="rounded-lg border border-[var(--border)] bg-[var(--card)] px-3 py-2"
-                                >
-                                  <div className="flex items-center gap-2">
-                                    <span className="text-sm">
-                                      {result.type === "book" ? "📚" : "🎬"}
-                                    </span>
-                                    <p className="text-sm font-semibold text-[var(--foreground)] leading-snug">
-                                      {result.title}
-                                    </p>
-                                  </div>
-                                  {result.meta && (
-                                    <p className="mt-1 pl-7 text-xs text-[var(--muted-foreground)]">
-                                      {result.meta}
-                                    </p>
-                                  )}
-                                </div>
-                              ))}
-                            </div>
-                          )}
-                        </article>
-                      )
-                    })}
-                  </div>
-                ) : (
-                  <p className="text-sm text-[var(--muted-foreground)]">
-                    Todavía no tienes recomendaciones guardadas.
-                  </p>
-                )}
-              </section>
-            )}
           </div>
 
-          <div className="flex flex-col gap-6">
-            <div className="bg-[var(--card)] rounded-2xl p-6 shadow-sm border border-[var(--border)] sticky top-24">
-              <h3 className="font-serif text-lg font-semibold text-[var(--foreground)] mb-4">
-                Tu perfil
-              </h3>
-
-              <div className="mb-5">
-                <div className="flex justify-between text-xs text-[var(--muted-foreground)] mb-2">
-                  <span>Completado</span>
-                  <span>{selectedCount}/5 campos</span>
-                </div>
-
-                <div className="h-2 rounded-full bg-[var(--beige)] overflow-hidden">
-                  <div
-                    className="h-full rounded-full bg-[var(--teal)] transition-all duration-500"
-                    style={{ width: `${(selectedCount / 5) * 100}%` }}
-                  />
-                </div>
-              </div>
-
-              <div className="flex flex-col gap-3 text-sm">
-
-
-                {prefs.genres.length > 0 && (
-                  <div>
-                    <span className="text-xs text-[var(--muted-foreground)] uppercase tracking-wider">
-                      Géneros
-                    </span>
-
-                    <div className="flex flex-wrap gap-1 mt-1">
-                      {prefs.genres.slice(0, 3).map((g) => (
-                        <span
-                          key={g}
-                          className="px-2 py-0.5 rounded-full bg-[var(--teal)]/10 text-[var(--teal)] text-xs"
-                        >
-                          {g}
-                        </span>
-                      ))}
+          {/* Sidebar - Summary */}
+          <div className="lg:col-span-4">
+            <div className="sticky top-32 flex flex-col gap-8">
+              <div className="bg-card rounded-[2.5rem] p-10 border border-border editorial-shadow">
+                <div className="flex flex-col gap-6">
+                  <h3 className="font-serif text-2xl font-light">Resumen del Perfil</h3>
+                  
+                  <div className="flex flex-col gap-2">
+                    <div className="flex justify-between text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+                      <span>Progresión</span>
+                      <span>{selectedCount}/5</span>
+                    </div>
+                    <div className="h-1 bg-secondary rounded-full overflow-hidden">
+                      <div 
+                        className="h-full bg-primary transition-all duration-1000 ease-out"
+                        style={{ width: `${(selectedCount / 5) * 100}%` }}
+                      />
                     </div>
                   </div>
-                )}
 
-                {prefs.storyType && (
-                  <div>
-                    <span className="text-xs text-[var(--muted-foreground)] uppercase tracking-wider">
-                      Historia
-                    </span>
-                    <p className="mt-0.5 font-medium text-[var(--foreground)]">
-                      {prefs.storyType}
-                    </p>
+                  <div className="flex flex-col gap-8 pt-4">
+                    <div className="flex flex-col gap-3">
+                      <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground italic">Atmósfera</p>
+                      <p className={cn("text-lg transition-all duration-500", prefs.mood ? "text-foreground font-medium" : "text-muted-foreground/30 italic font-light")}>
+                        {prefs.mood || "No definida"}
+                      </p>
+                    </div>
+                    
+                    <div className="flex flex-col gap-3">
+                      <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground italic">Narrativa</p>
+                      <p className={cn("text-lg transition-all duration-500", prefs.storyType ? "text-foreground font-medium" : "text-muted-foreground/30 italic font-light")}>
+                        {prefs.storyType || "No definida"}
+                      </p>
+                    </div>
+
+                    <div className="flex flex-col gap-3">
+                      <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground italic">Géneros Seleccionados</p>
+                      <div className="flex flex-wrap gap-2">
+                        {prefs.genres.length > 0 ? (
+                          prefs.genres.slice(0, 3).map(g => (
+                            <span key={g} className="px-3 py-1 rounded-full bg-primary/10 text-primary text-[10px] font-bold">
+                              {g}
+                            </span>
+                          ))
+                        ) : (
+                          <span className="text-lg text-muted-foreground/30 italic font-light">Ninguno</span>
+                        )}
+                        {prefs.genres.length > 3 && <span className="text-[10px] text-muted-foreground font-bold mt-1">+{prefs.genres.length - 3}</span>}
+                      </div>
+                    </div>
                   </div>
-                )}
 
-                {prefs.mood && (
-                  <div>
-                    <span className="text-xs text-[var(--muted-foreground)] uppercase tracking-wider">
-                      Estado de ánimo
-                    </span>
-                    <p className="mt-0.5 font-medium text-[var(--foreground)]">
-                      {prefs.mood}
-                    </p>
+                  <div className="flex flex-col gap-4 pt-10">
+                    <button
+                      onClick={() => isValid && onSubmit(prefs)}
+                      disabled={!isValid}
+                      className={cn(
+                        "w-full py-5 rounded-full text-xs font-bold uppercase tracking-[0.2em] transition-all duration-500 cursor-pointer",
+                        isValid 
+                          ? "bg-primary text-white editorial-shadow hover:scale-[1.02]" 
+                          : "bg-secondary text-muted-foreground/40 cursor-not-allowed"
+                      )}
+                    >
+                      Generar Descubrimientos
+                    </button>
+                    
+                    <button
+                      onClick={() => setPrefs({
+                        genres: [], movieActors: "", bookAuthors: "", storyType: "", mood: "", mediaType: "both"
+                      })}
+                      className="group flex items-center justify-center gap-2 py-4 text-[10px] font-bold uppercase tracking-widest text-muted-foreground hover:text-destructive transition-colors cursor-pointer"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                      Reiniciar Perfil
+                    </button>
                   </div>
-                )}
-              </div>
-
-              <div className="mt-6 flex flex-col gap-3">
-                <button
-                  onClick={() => isValid && onSubmit(prefs)}
-                  disabled={!isValid}
-                  className={cn(
-                    "w-full py-3.5 rounded-full text-sm font-semibold transition-all duration-200 cursor-pointer",
-                    isValid
-                      ? "bg-[var(--teal)] text-white hover:bg-[var(--teal-dark)] shadow-md hover:shadow-lg hover:-translate-y-0.5"
-                      : "bg-[var(--muted)] text-[var(--muted-foreground)] cursor-not-allowed opacity-60"
-                  )}
-                >
-                  Generar recomendaciones
-                </button>
-
-                <button
-                  onClick={() =>
-                    setPrefs({
-                      genres: [],
-                      movieActors: "",
-                      bookAuthors: "",
-                      storyType: "",
-                      mood: "",
-                      mediaType: "both",
-                    })
-                  }
-                  className="w-full py-3 rounded-full text-sm font-medium text-[var(--muted-foreground)] border border-[var(--border)] hover:bg-[var(--beige)] transition-colors cursor-pointer"
-                >
-                  Limpiar todo
-                </button>
+                </div>
               </div>
 
               {!isValid && (
-                <p className="mt-3 text-xs text-[var(--muted-foreground)] text-center leading-relaxed">
-                  Selecciona al menos un género, tipo de historia y estado de ánimo.
-                </p>
+                <div className="px-8 text-center">
+                  <p className="text-[10px] text-muted-foreground italic leading-relaxed">
+                    * Define al menos un género, narrativa y atmósfera para que la IA pueda curar tus resultados.
+                  </p>
+                </div>
               )}
             </div>
           </div>
@@ -504,3 +416,4 @@ export function PreferencesForm({
     </main>
   )
 }
+
