@@ -3,7 +3,7 @@ import { NextResponse } from "next/server"
 export const revalidate = 900 // Revalidar cada 15 minutos
 
 export async function GET() {
-  const apiKey = process.env.GOOGLE_BOOKS_API_KEY
+  const apiKey = process.env.GEMINI_BOOKS_API_KEY
   
   try {
     // Usamos una búsqueda amplia para asegurar resultados

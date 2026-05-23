@@ -103,12 +103,12 @@ export async function POST(request: Request) {
     const preferences = (await request.json()) as PreferencesBody
     console.log("Recepción de petición /api/recommend con preferencias:", preferences)
     
-    if (!process.env.GOOGLE_GEMINI_API_KEY) {
-      console.error("GOOGLE_GEMINI_API_KEY no está configurada")
-      throw new Error("GOOGLE_GEMINI_API_KEY no está configurada en el servidor")
+    if (!process.env.GEMINI_API_KEY) {
+      console.error("GEMINI_API_KEY no está configurada")
+      throw new Error("GEMINI_API_KEY no está configurada en el servidor")
     }
 
-    console.log("Usando API Key (primeros 5 caracteres):", process.env.GOOGLE_GEMINI_API_KEY.substring(0, 5))
+    console.log("Usando API Key (primeros 5 caracteres):", process.env.GEMINI_API_KEY.substring(0, 5))
 
 
     const prompt = `
