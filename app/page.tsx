@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect, useMemo, useCallback } from "react"
+import { useState, useEffect, useMemo, useCallback, Suspense } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { Navbar } from "@/components/navbar"
 import { LandingPage } from "@/components/landing-page"
@@ -14,7 +14,7 @@ import { createClient } from "@/lib/supabase"
 
 type Screen = "landing" | "preferences" | "loading" | "results" | "detail"
 
-export default function Home() {
+function HomeContent() {
   const [screen, setScreen] = useState<Screen>("landing")
   const [preferences, setPreferences] = useState<Preferences | null>(null)
   const [selectedRec, setSelectedRec] = useState<Recommendation | null>(null)
@@ -293,5 +293,13 @@ export default function Home() {
         />
       )}
     </>
+  )
+}
+
+export default function Home() {
+  return (
+    <Suspense fallback={<LoadingScreen />}>
+      <HomeContent />
+    </Suspense>
   )
 }
