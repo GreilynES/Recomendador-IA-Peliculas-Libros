@@ -38,11 +38,20 @@ export function LandingPage({ onStart, onExample }: LandingPageProps) {
         
         {/* BACKGROUND IMAGE */}
         <div className="absolute inset-0 z-0 bg-background">
+          {/* Desktop background */}
           <Image
             src="/ImgLanding.png"
             alt="Cinematic Background"
             fill
-            className="object-cover object-left opacity-90"
+            className="hidden md:block object-cover object-left opacity-90"
+            priority
+          />
+          {/* Mobile background */}
+          <Image
+            src="/mobileLanding.png"
+            alt="Cinematic Background Mobile"
+            fill
+            className="block md:hidden object-cover object-left opacity-90"
             priority
           />
           {/* PRONOUNCED ORGANIC WAVE DIVIDER */}

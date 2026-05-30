@@ -25,11 +25,11 @@ export const metadata: Metadata = {
   description: 'Un espacio minimalista para descubrir películas y libros que resuenan contigo. Lumina usa inteligencia artificial para curar recomendaciones basadas en tu sensibilidad.',
   icons: {
     icon: [
-      { url: '/icon-light-32x32.png', media: '(prefers-color-scheme: light)' },
-      { url: '/icon-dark-32x32.png',  media: '(prefers-color-scheme: dark)' },
-      { url: '/icon.svg', type: 'image/svg+xml' },
+      { url: '/Logo.png', media: '(prefers-color-scheme: light)' },
+      { url: '/Logo.png',  media: '(prefers-color-scheme: dark)' },
+      { url: '/Logo.png', type: 'image/svg+xml' },
     ],
-    apple: '/apple-icon.png',
+    apple: '/Logo.png',
   },
 }
 
